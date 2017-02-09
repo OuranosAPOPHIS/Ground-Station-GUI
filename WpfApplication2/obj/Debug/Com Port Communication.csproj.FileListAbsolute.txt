@@ -25,3 +25,21 @@ C:\Users\b\Documents\Visual Studio 2015\Projects\Com Port Communication\WpfAppli
 C:\Users\b\Documents\Visual Studio 2015\Projects\Com Port Communication\WpfApplication2\obj\Debug\APOPHISGS.Properties.Resources.resources
 C:\Users\b\Documents\Visual Studio 2015\Projects\Com Port Communication\WpfApplication2\obj\Debug\APOPHISGS.exe
 C:\Users\b\Documents\Visual Studio 2015\Projects\Com Port Communication\WpfApplication2\obj\Debug\APOPHISGS.pdb
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\APOPHISGS.exe.config
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.exe
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.pdb
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\Com Port Communication.csprojResolveAssemblyReference.cache
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\Home.g.cs
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\App.g.cs
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS_MarkupCompile.cache
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS_MarkupCompile.lref
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\APOPHISGS.exe
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\APOPHISGS.pdb
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\SharpDX.dll
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\SharpDX.XInput.dll
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\SharpDX.xml
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\bin\Debug\SharpDX.XInput.xml
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\Home.baml
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.g.resources
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.Properties.Resources.resources
+C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\Com Port Communication.csproj.GenerateResource.Cache

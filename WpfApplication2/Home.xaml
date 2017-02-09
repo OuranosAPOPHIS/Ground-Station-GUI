@@ -11,7 +11,7 @@
             <ColumnDefinition Width="204*"/>
             <ColumnDefinition Width="53*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="cbPorts" HorizontalAlignment="Left" Margin="20,537,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="cbPorts_SelectionChanged" Height="23"/>
+        <ComboBox x:Name="cbPorts" HorizontalAlignment="Left" Margin="20,537,0,0" VerticalAlignment="Top" Width="120" Height="23"/>
         <ComboBox x:Name="cbBaudRate" HorizontalAlignment="Left" Margin="145,537,0,0" VerticalAlignment="Top" Width="120" Height="23"/>
         <Label x:Name="lComPort" Content="COM Port" HorizontalAlignment="Left" Margin="20,509,0,0" VerticalAlignment="Top" Height="23" Background="Orange" Width="120"/>
         <Label x:Name="lBaudRate" Content="Baud Rate" HorizontalAlignment="Left" Margin="145,509,0,0" VerticalAlignment="Top" Height="23" Background="Orange" Width="120"/>
@@ -65,17 +65,17 @@
         <Button x:Name="ModeBtn" Content="Switch Mode" HorizontalAlignment="Left" Margin="65,311,0,0" VerticalAlignment="Top" Width="120" Click="ModeBtn_Click"/>
         <Label x:Name="RadioLabel" Content="Radio" HorizontalAlignment="Left" Margin="30,344,0,0" VerticalAlignment="Top" Width="70" Background="LightCyan"/>
         <TextBox x:Name="Radio" HorizontalAlignment="Left" Height="26" IsReadOnly="True" Margin="30,370,0,0" TextWrapping="Wrap" Text="Not Connected" VerticalAlignment="Top" Width="110" TextAlignment="Center" Background="Red" />
-        <TextBox x:Name="TargetLocationLabel" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="250,98,0,0" TextWrapping="Wrap" Text="Set Target Location" TextAlignment="Center" VerticalAlignment="Top" Background="LightCyan" Width="232"/>
-        <TextBox x:Name="TargetLatitude" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="326,126,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
-        <Label x:Name="TargelLatitudeLabel" Content="Latitude" HorizontalAlignment="Left" Margin="250,126,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
-        <Label x:Name="TargetLongitudeLabel" Content="Longitude" HorizontalAlignment="Left" Margin="250,157,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
-        <TextBox x:Name="TargetLongitude" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="326,157,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
-        <Button x:Name="SendBtn" Content="Send" HorizontalAlignment="Left" Margin="250,272,0,0" VerticalAlignment="Top" Width="109" Click="SendBtn_Click" RenderTransformOrigin="2.167,3.6"/>
-        <TextBox x:Name="CurrentTargetLocation" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="250,297,0,0" TextWrapping="Wrap" Text="Current Target Location" TextAlignment="Center" VerticalAlignment="Top" Background="LightCyan" Width="232"/>
-        <TextBox x:Name="CurrentTargetLatitude" IsReadOnly="True" HorizontalAlignment="Left" Height="26" Margin="326,325,0,0" TextWrapping="Wrap" Text="00.00000" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
-        <Label x:Name="CurentTargetLatitudeLabel" Content="Latitude" HorizontalAlignment="Left" Margin="250,325,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
-        <Label x:Name="CurrentTargetLongitudeLabel" Content="Longitude" HorizontalAlignment="Left" Margin="250,356,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
-        <TextBox x:Name="CurrentTargetLongitude" IsReadOnly="True" HorizontalAlignment="Left" Height="26" Margin="326,356,0,0" TextWrapping="Wrap" Text="000.00000" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
+        <TextBox x:Name="TargetLocationLabel" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="600,348,0,0" TextWrapping="Wrap" Text="Set Target Location" TextAlignment="Center" VerticalAlignment="Top" Background="LightCyan" Width="232"/>
+        <TextBox x:Name="TargetLatitude" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="676,376,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
+        <Label x:Name="TargelLatitudeLabel" Content="Latitude" HorizontalAlignment="Left" Margin="600,376,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
+        <Label x:Name="TargetLongitudeLabel" Content="Longitude" HorizontalAlignment="Left" Margin="600,407,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
+        <TextBox x:Name="TargetLongitude" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="676,407,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
+        <Button x:Name="SendBtn" Content="Send" HorizontalAlignment="Left" Margin="600,522,0,0" VerticalAlignment="Top" Width="109" Click="SendBtn_Click" RenderTransformOrigin="2.167,3.6"/>
+        <TextBox x:Name="CurrentTargetLocation" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="600,547,0,0" TextWrapping="Wrap" Text="Current Target Location" TextAlignment="Center" VerticalAlignment="Top" Background="LightCyan" Width="232"/>
+        <TextBox x:Name="CurrentTargetLatitude" IsReadOnly="True" HorizontalAlignment="Left" Height="26" Margin="676,575,0,0" TextWrapping="Wrap" Text="00.00000" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
+        <Label x:Name="CurentTargetLatitudeLabel" Content="Latitude" HorizontalAlignment="Left" Margin="600,575,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
+        <Label x:Name="CurrentTargetLongitudeLabel" Content="Longitude" HorizontalAlignment="Left" Margin="600,606,0,0" VerticalAlignment="Top" Width="72" Background="LightCyan"/>
+        <TextBox x:Name="CurrentTargetLongitude" IsReadOnly="True" HorizontalAlignment="Left" Height="26" Margin="676,606,0,0" TextWrapping="Wrap" Text="000.00000" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
         <TextBox x:Name="ConnectPlatform" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="20,481,0,0" TextWrapping="Wrap" Text="Connect to Platform" TextAlignment="Center" VerticalAlignment="Top" Background="LightCyan" Width="245"/>
         <TextBox x:Name="ConnectController" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="20,598,0,0" TextWrapping="Wrap" Text="Connect a Controller" TextAlignment="Center" VerticalAlignment="Top" Background="LightCyan" Width="245"/>
         <Button x:Name="btnConnectController" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="20,626,0,0" Click="btnConnectController_Click" Height="23"/>
@@ -98,15 +98,17 @@
         <TextBox x:Name="posY" HorizontalAlignment="Left" Height="26" IsReadOnly="True" Margin="615,268,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220" TextAlignment="Center"/>
         <TextBox x:Name="posZ" HorizontalAlignment="Left" Height="26"  IsReadOnly="True" Margin="615,299,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220" TextAlignment="Center"/>
         <Label x:Name="PosZLabel" Content="Position Z" HorizontalAlignment="Left" Margin="508,299,0,0" VerticalAlignment="Top" Width="87" Background="LightCyan"/>
-        <TextBox x:Name="headAngle" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="357,210,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" TextAlignment="Center" />
-        <Label x:Name="HeadAngLabel" Content="Heading Angle" HorizontalAlignment="Left" Margin="250,210,0,0" VerticalAlignment="Top" Width="97" Background="LightCyan"/>
-        <Label x:Name="DistLabel" Content="Distance" HorizontalAlignment="Left" Margin="250,241,0,0" VerticalAlignment="Top" Width="97" Background="LightCyan"/>
-        <TextBox x:Name="dist" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="357,241,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" TextAlignment="Center"/>
-        <Label x:Name="Or" Content="Or" FontStyle="Italic" HorizontalAlignment="Left" Margin="265,183,0,0" VerticalAlignment="Top" Height="32" Width="35"/>
+        <TextBox x:Name="headAngle" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="707,460,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" TextAlignment="Center" />
+        <Label x:Name="HeadAngLabel" Content="Heading Angle" HorizontalAlignment="Left" Margin="600,460,0,0" VerticalAlignment="Top" Width="97" Background="LightCyan"/>
+        <Label x:Name="DistLabel" Content="Distance" HorizontalAlignment="Left" Margin="600,491,0,0" VerticalAlignment="Top" Width="97" Background="LightCyan"/>
+        <TextBox x:Name="dist" IsReadOnly="False" HorizontalAlignment="Left" Height="26" Margin="707,491,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" TextAlignment="Center"/>
+        <Label x:Name="Or" Content="Or" FontStyle="Italic" HorizontalAlignment="Left" Margin="615,433,0,0" VerticalAlignment="Top" Height="32" Width="35"/>
         <TextBox x:Name="updateRate" HorizontalAlignment="Left" Height="26"  IsReadOnly="True" Margin="114,634,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="140" TextAlignment="Center" Grid.Column="1"/>
         <Label x:Name="UpdateRateLabel" Content="Update Rate (ms)" HorizontalAlignment="Left" Margin="114,603,0,0" VerticalAlignment="Top" Width="140" Background="LightCyan" Grid.Column="1"/>
         <TextBox x:Name="dataStream" HorizontalAlignment="Left" Height="26"  IsReadOnly="True" Margin="975,634,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="140" TextAlignment="Center" Grid.ColumnSpan="2"/>
         <Label x:Name="dataStreamLabel" Content="Data Stream Size (bytes)" HorizontalAlignment="Left" Margin="975,603,0,0" VerticalAlignment="Top" Width="140" Background="LightCyan" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="Timer" IsReadOnly="False" Text = "0" HorizontalAlignment="Left" Height="26" Margin="260,384,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" TextAlignment="Center"/>
+        <Button x:Name="DeployPayload" Content="Deploy" HorizontalAlignment="Left" Margin="235,215,0,0" VerticalAlignment="Top" Width="109" Click="DeployPayload_Click" RenderTransformOrigin="2.167,3.6" Height="26"/>
 
     </Grid>
 </Window>

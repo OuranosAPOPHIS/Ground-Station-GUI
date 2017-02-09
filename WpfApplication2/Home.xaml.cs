@@ -11,11 +11,57 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Runtime.InteropServices;
 using System.IO;
-//using Windows.Gaming.Input;
+using System.Windows.Input;
+using SharpDX.XInput;
+using System.Windows.Threading;
 
 
 namespace WpfApplication2
 {
+    //
+    // Definition for the xinput controller class.
+    class XInputController
+    {
+        Controller controller;
+        Gamepad gamepad;
+        public bool connected = false;
+        public int deadband = 2500;
+        public Point leftThumb, rightThumb = new Point(0, 0);
+        public float leftTrigger, rightTrigger;
+        public GamepadButtonFlags buttonState = 0x0000;
+
+        //
+        // XInputController Constructor.
+        public XInputController()
+        {
+            controller = new Controller(UserIndex.One);
+            connected = controller.IsConnected;
+        }
+
+        // Call this method to update all class values
+        public void Update()
+        {
+            if (!connected)
+                return;
+
+            gamepad = controller.GetState().Gamepad;
+
+            //
+            // Analog stick positions.
+            leftThumb.X = (Math.Abs((float)gamepad.LeftThumbX) < deadband) ? 0 : (float)gamepad.LeftThumbX / short.MinValue * -1;
+            leftThumb.Y = (Math.Abs((float)gamepad.LeftThumbY) < deadband) ? 0 : (float)gamepad.LeftThumbY / short.MaxValue * 1;
+            rightThumb.Y = (Math.Abs((float)gamepad.RightThumbX) < deadband) ? 0 : (float)gamepad.RightThumbX / short.MaxValue * 1;
+            rightThumb.X = (Math.Abs((float)gamepad.RightThumbY) < deadband) ? 0 : (float)gamepad.RightThumbY / short.MaxValue * 1;
+
+            //
+            // Bitwise mapping of the buttons pressed.
+            buttonState = gamepad.Buttons;
+
+            leftTrigger = gamepad.LeftTrigger;
+            rightTrigger = gamepad.RightTrigger;            
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -29,14 +75,55 @@ namespace WpfApplication2
         internal delegate void SerialDataReceivedEventHandlerDelegate(
             object sender, SerialDataReceivedEventArgs e);
 
+        internal delegate void dispatcherTimer_Tick(object sender, EventArgs e);
+
         delegate void SetTextCallback(string text);
 
         //
-        // Maximize the window.
-        //WindowState windowState = WindowState.Maximized;
+        // True will be autonomous mode. False will be manual mode.
+        // Initialize this to manual mode. 'M' for manual. 'A' for autonomous.
+        char controlState = 'M';
+
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            InitializeComPort();
+
+            ComPort.DataReceived +=
+                new System.IO.Ports.SerialDataReceivedEventHandler(port_DataReceived_1);
+
+            // add handler to call closed function upon program exit
+            this.Closed += new EventHandler(MainWindow_Closed);
+        }
 
         //
         // My stuff.
+
+        //
+        // Payload release indicator.
+        public bool payloadRelease = false;
+
+        //
+        // Flag to indicate when user connects to the radio.
+        public bool radioConnected = false;
+
+        //
+        // Flag to indicate when a valid gps target coordinate has been set.
+        public bool targetSet = false;
+
+        //
+        // Latitude and longitude of target position.
+        public float latitude = 0.0f;
+        public float longitude = 0.0f;
+
+        //
+        // Set up a controller.
+        XInputController controller = new XInputController();
+
+        //
+        // Set up a timer for the controller.
+        DispatcherTimer controllerTimer = new DispatcherTimer();         
 
         //
         // Setup a system clock to count the time between data packets.
@@ -47,7 +134,7 @@ namespace WpfApplication2
 
         //
         // Open a log file to write the data to.
-       // using (System.IO.StreamWriter sw = File.AppendText(" c:\\test.txt"));
+        // using (System.IO.StreamWriter sw = File.AppendText(" c:\\test.txt"));
         //string lines = "First Line.\nSecond Line.\nThird Line.\n";
 
         //
@@ -103,26 +190,33 @@ namespace WpfApplication2
             }
         }
 
+        //
+        // Global variable to store all th data.
         dataPacket inputData = new dataPacket();
 
         //
-        // True will be autonomous mode. False will be manual mode.
-        // Initialize this to manual mode.
-        bool controlState = false;
-
-        public MainWindow()
+        // Output data struct.
+        public struct outDataPacket
         {
-            InitializeComponent();
-
-            InitializeComPort();
-
-            ComPort.DataReceived +=
-                new System.IO.Ports.SerialDataReceivedEventHandler(port_DataReceived_1);
-
-            // add handler to call closed function upon program exit
-            this.Closed += new EventHandler(MainWindow_Closed);
+            public char type;          // Target or Control command? T or C?
+            public char flyordrive;     // vehicle flying or driving?
+            public char fdConfirm;      // fly or drive confirmation;
+            public float targetLat;    // Target latitude (only in auto mode)
+            public float targetLong;   // Target longitude (only in auto mode)
+            public float throttle;   // Desired throttle level.
+            public float roll;         // Desired roll angle.
+            public float pitch;        // Desired pitch angle.
+            public float yaw;          // Desired yaw angle.
+            public bool payloadRelease;    // Release the payload command.
+            public bool prConfirm;         // Confirmation to release payload command.
         }
 
+        //
+        // Global variable to store output data.
+        outDataPacket outData = new outDataPacket();
+
+        //
+        // Function to initialize the serial port on the machine.
         private void InitializeComPort()
         {
             string[] ArrayComPortsNames = null;
@@ -156,6 +250,9 @@ namespace WpfApplication2
             cbBaudRate.Text = cbBaudRate.Items[0].ToString();
         }
 
+        //
+        // Com port received data event handler. Called by the operating system when
+        // there is data available in the rx buffer.
         private void port_DataReceived_1(object sender, SerialDataReceivedEventArgs e)
         {
             int size;
@@ -202,6 +299,8 @@ namespace WpfApplication2
             }
         }
 
+        //
+        // Updates the GUI with the new data values in the struct dataPacket.
         private void SetText()
         {
             //
@@ -293,11 +392,48 @@ namespace WpfApplication2
                 this.PayloadDeployed.Background = Brushes.Red;
         }
 
-        private void cbPorts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        //
+        // Send data packet to the platform.
+        public void WriteData()
         {
+            byte[] data = new byte[21]; // max data packet size is 23 bytes.
+            string dataString;
 
+            if (controlState == 'A')
+            {
+                //
+                // Build a buffer to send to the platform.
+                data[0] = Convert.ToByte(outData.type);
+                data[1] = Convert.ToByte(outData.targetLat);
+                data[5] = Convert.ToByte(outData.targetLong);
+            }
+            else if (controlState == 'M')
+            {
+                //
+                // Build a buffer to send to the platform.
+                data[0] = Convert.ToByte(outData.type);
+                data[1] = Convert.ToByte(outData.flyordrive);
+                data[2] = Convert.ToByte(outData.fdConfirm);
+                data[3] = Convert.ToByte(outData.throttle);
+                data[7] = Convert.ToByte(outData.roll);
+                data[11] = Convert.ToByte(outData.pitch);
+                data[14] = Convert.ToByte(outData.yaw);
+                data[18] = Convert.ToByte(outData.payloadRelease);
+                data[19] = Convert.ToByte(outData.prConfirm);
+            }
+
+            //
+            // Convert to string to write to the radio.
+            dataString = System.Text.Encoding.Default.GetString(data);
+
+            //
+            // Write the data.
+            ComPort.WriteLine(dataString);
         }
 
+
+        //
+        // Connect to the Com Port button.
         private void btnPortState_Click(object sender, RoutedEventArgs e)
         {
             if (btnPortState.Content.ToString() == "Connect")
@@ -332,6 +468,7 @@ namespace WpfApplication2
                 // We have connection! 
                 this.Radio.Background = Brushes.GreenYellow;
                 this.Radio.Text = "Connected";
+                radioConnected = true;
             }
             else
             {
@@ -342,19 +479,115 @@ namespace WpfApplication2
                 // Connection terminated.
                 this.Radio.Background = Brushes.Red;
                 this.Radio.Text = "Not Connected";
+                radioConnected = false;
             }
         }
 
-        void MainWindow_Closed(object sender, EventArgs e)
+        //
+        // Controller timer event handler. Called every 250 ms to check the 
+        // state of the controller. 
+        private void controllerTimerTick(object sender, EventArgs e)
         {
-            //
-            // Close the COM port before ending the program.
-            if (!ComPort.IsOpen)
+            if (controlState == 'A')
             {
-                ComPort.Close();
+                //
+                // Check if user has input coordinates yet or not.
+                if (targetSet)
+                {
+                    //
+                    // Autonomous control. Just send lat and long and T for type to platform.
+                    outData.type = 'T';
+                    outData.targetLat = this.latitude;
+                    outData.targetLong = this.longitude;
+                }
+                else
+                {
+                    //
+                    // Send a '0', indicating bad data, ignore the target lat and long.
+                    outData.type = '0';
+                }
             }
-            // else do nothing, port has already been closed.
+            else // Manual mode, control the platform with the controller.
+            {
+                //
+                // Refresh the button presses on the controller.
+                controller.Update();
 
+                //
+                // Check the throttle level. Ignore any x value on the right stick.
+                // This will be a % from 0.0 to 1.0.
+                outData.throttle = (Single)controller.rightThumb.Y;
+
+                //
+                // Check if we are driving or flying.
+                if (inputData.movement == 'G')
+                {
+                    //
+                    // Travelling on the ground. Ignore pitch and roll.
+                    outData.yaw = (Single)controller.leftThumb.X;
+                    outData.pitch = 0.0F;
+                    outData.roll = 0.0F;
+                }
+                else if (inputData.movement == 'A')
+                {
+                    //
+                    // We are flying.
+                    // Calculate the values of the left analog stick.
+                    outData.pitch = (Single)controller.leftThumb.Y;
+                    outData.roll = (Single)controller.leftThumb.X;
+
+                    //
+                    // Use the left and right triggers to calaculate yaw "rate". 
+                    // Value ranges from 0 to 255 for triggers. 
+                    // TODO
+                }
+
+                //
+                // Proof that controller works.
+                if (controller.leftTrigger > 1.0)
+                {
+                    this.Timer.Text = controller.leftThumb.X.ToString();
+                }
+                else if (controller.rightTrigger > 1.0)
+                {
+                    this.Timer.Text = controller.rightTrigger.ToString();
+                }
+
+                //
+                // Check the state of the buttons.
+                if (Convert.ToInt16(controller.buttonState) == Convert.ToInt16(GamepadButtonFlags.Start))
+                {
+                    //
+                    // Start button is pressed, change from gnd travel to air travel.
+                    if (outData.flyordrive == 'D')
+                    {
+                        outData.flyordrive = 'F';
+                        outData.fdConfirm = 'F';
+                        this.FlyorDrive.Text = "FLYING";
+                    }
+                    else
+                    {
+                        outData.flyordrive = 'D';
+                        outData.fdConfirm = 'D';
+                        this.FlyorDrive.Text = "DRIVING";
+                    }
+                }
+
+                //
+                // Check if payload has been deployed.
+                if (payloadRelease)
+                {
+                    outData.payloadRelease = true;
+                    outData.prConfirm = true;
+                }
+
+                //
+                // Trigger a data packet send over the com port.
+                if (radioConnected)
+                {
+                    WriteData();
+                }
+            }
         }
 
         //
@@ -363,7 +596,7 @@ namespace WpfApplication2
         {
             //
             // Get the color of the autotonomous box.
-            if (controlState)
+            if (controlState == 'A')
             {
                 //
                 // Currently in auto mode. Send command to switch to manual.
@@ -372,10 +605,9 @@ namespace WpfApplication2
 
                 //
                 // Send command to platform.
-
-                controlState = false;
+                controlState = 'M';
             }
-            else
+            else if (controlState == 'M')
             {
                 //
                 // Currently in manual mode. Send comand to switch to auto.
@@ -384,8 +616,7 @@ namespace WpfApplication2
 
                 //
                 // Send command to platform.
-
-                controlState = true;
+                controlState = 'A';
             }
         }
 
@@ -394,7 +625,6 @@ namespace WpfApplication2
         private void SendBtn_Click(object sender, RoutedEventArgs e)
         {
             string targetLat; string targetLong;
-            float latitude; float longitude;
 
             //
             // Get the data in the two text boxes.
@@ -409,28 +639,85 @@ namespace WpfApplication2
                 System.Windows.Forms.MessageBox.Show("You must input the target coordinates first!");
                 return;
             }
+            else
+            {
+                //
+                // Signal that a target location has been set.
+                targetSet = true;
 
-            //
-            // This program assumes the user will enter valid data.
-            // Convert this data to floating point.
-            latitude = Convert.ToSingle(targetLat);
-            longitude = Convert.ToSingle(targetLong);
+                //
+                // This program assumes the user will enter valid data.
+                // Convert this data to floating point.
+                latitude = Convert.ToSingle(targetLat);
+                longitude = Convert.ToSingle(targetLong);
 
-            //
-            // Send over the COM port.
-            // I don't know how to do that...
+                //
+                // Send over the COM port.
+                // I don't know how to do that...
 
-            //
-            // Set the current target position strings.
-            CurrentTargetLatitude.Text = targetLat;
-            CurrentTargetLongitude.Text = targetLong;
+                //
+                // Set the current target position strings.
+                CurrentTargetLatitude.Text = targetLat;
+                CurrentTargetLongitude.Text = targetLong;
+            }
         }
 
         private void btnConnectController_Click(object sender, RoutedEventArgs e)
         {
             //
             // Initialize a controller using XINPUT.
+            controller.Update();
+
+            //
+            // Initialize the controller timer.
+            controllerTimer.Interval = TimeSpan.FromMilliseconds(250);
+            controllerTimer.Tick += controllerTimerTick;
+
+            //
+            // Start the timer.
+            controllerTimer.Start();
+
+            //
+            // Change the button to say disconnect.
+            this.btnConnectController.Content = "Connected!";
+        }
+
+        //
+        // When button is pressed, manual deploy the payload. 
+        private void DeployPayload_Click(object sender, RoutedEventArgs e)
+        {
+            //
+            // Deploy the payload.
+            if (payloadRelease == false)
+            {
+                //
+                // Set it to true.
+                payloadRelease = true;
+
+                //
+                // Change the GUI.
+                this.DeployPayload.Content = "Deployed";
+                this.PayloadDeployed.Background = Brushes.GreenYellow;
+                this.PayloadDeployed.Text = "Deployed";
+            }
+            //
+            // else do nothing. It is already deployed.
+        }
+
+        //
+        // End of program.
+        void MainWindow_Closed(object sender, EventArgs e)
+        {
+            //
+            // Close the COM port before ending the program.
+            if (!ComPort.IsOpen)
+            {
+                ComPort.Close();
+            }
+            // else do nothing, port has already been closed.
 
         }
+
     }
 }
+
