@@ -412,14 +412,14 @@ namespace WpfApplication2
                 //
                 // Build a buffer to send to the platform.
                 data[0] = Convert.ToByte(outData.type);
-                data[1] = Convert.ToByte(outData.flyordrive);
-                data[2] = Convert.ToByte(outData.fdConfirm);
-                data[3] = Convert.ToByte(outData.throttle);
-                data[7] = Convert.ToByte(outData.roll);
-                data[11] = Convert.ToByte(outData.pitch);
-                data[14] = Convert.ToByte(outData.yaw);
-                data[18] = Convert.ToByte(outData.payloadRelease);
-                data[19] = Convert.ToByte(outData.prConfirm);
+                //data[1] = Convert.ToByte(outData.flyordrive);
+                //data[2] = Convert.ToByte(outData.fdConfirm);
+                //data[3] = Convert.ToByte(outData.throttle);
+                //data[7] = Convert.ToByte(outData.roll);
+                //data[11] = Convert.ToByte(outData.pitch);
+                //data[14] = Convert.ToByte(outData.yaw);
+                //data[18] = Convert.ToByte(outData.payloadRelease);
+                //data[19] = Convert.ToByte(outData.prConfirm);
             }
 
             //
@@ -583,7 +583,7 @@ namespace WpfApplication2
 
                 //
                 // Trigger a data packet send over the com port.
-                if (radioConnected)
+                if (radioConnected && (ComPort.BytesToRead == 0))
                 {
                     WriteData();
                 }
