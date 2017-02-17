@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -196,37 +196,75 @@ namespace WpfApplication2
 
         //
         // Output data struct.
+        //[StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ControlOutDataPacket
         {
-            public char type;          // Target or Control command? T or C?
-            public char flyordrive;     // vehicle flying or driving?
-            public char fdConfirm;      // fly or drive confirmation;
             public float throttle;   // Desired throttle level.
             public float roll;         // Desired roll angle.
             public float pitch;        // Desired pitch angle.
             public float yaw;          // Desired yaw angle.
+            public char type;          // Target or Control command? T or C?
+            public char flyordrive;     // vehicle flying or driving?
+            public char fdConfirm;      // fly or drive confirmation;
             public bool payloadRelease;    // Release the payload command.
             public bool prConfirm;         // Confirmation to release payload command.
         }
 
-        //
-        // Output data struct for autonomous control.
-        public struct TargetOutDataPacket
+        byte[] getControlOutBytes(ControlOutDataPacket sCODP)
         {
-            public char type;          // Target or Control command? T or C?
-            public Single targetLat;    // Target latitude
-            public Single targetLong;   // Target longitude
+            int size = Marshal.SizeOf(sCODP);
+            byte[] arr = new byte[size];
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(sCODP, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+            Marshal.FreeHGlobal(ptr);
+            return arr;
         }
 
+        //
+        // Output data struct for autonomous control.
+        //[StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct TargetOutDataPacket
+        {
+            public byte pad1;
+            public byte pad2;
+            public byte pad3;
+            public char type;          // Target or Control command? T or C?
+            public float targetLat;    // Target latitude
+            public float targetLong;   // Target longitude
+
+            public TargetOutDataPacket (char initialType)
+            {
+                pad1 = 0xFF;
+                pad2 = 0xFF;
+                pad3 = 0xFF;
+                type = initialType;
+                targetLat = 0x00;
+                targetLong = 0x00;
+            }
+        }
+
+        byte[] getTargetOutBytes(TargetOutDataPacket sTODP)
+        {
+            int size = Marshal.SizeOf(sTODP);
+            byte[] arr = new byte[size];
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(sTODP, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+            Marshal.FreeHGlobal(ptr);
+            return arr;
+        }
+        
         //
         // Global variable to store output data.
         ControlOutDataPacket ControlOutData = new ControlOutDataPacket();
 
         //
         // Global variable to store target output data.
-        TargetOutDataPacket TargetOutData = new TargetOutDataPacket();
-
-
+        TargetOutDataPacket TargetOutData = new TargetOutDataPacket('\0');
+        
         //
         // Function to initialize the serial port on the machine.
         private void InitializeComPort()
@@ -404,6 +442,8 @@ namespace WpfApplication2
                 this.PayloadDeployed.Background = Brushes.Red;
         }
 
+
+
         //
         // Send data packet to the platform.
         public void WriteData()
@@ -412,44 +452,16 @@ namespace WpfApplication2
 
             if (controlState == 'A')
             {
-                byte[] data = new byte[9]; // target packet is 9 bytes long.
-
-                //
-                // Build a buffer to send to the platform.
-                data[0] = Convert.ToByte(TargetOutData.type);
-                byte[] data1 = BitConverter.GetBytes(TargetOutData.targetLat);
-                byte[] data2 = BitConverter.GetBytes(TargetOutData.targetLong);
-
-                Buffer.BlockCopy(data1, 0, data, 1, 4);
-                Buffer.BlockCopy(data2, 0, data, 5, 4);
-
-                //
-                // Convert to string to write to the radio.
-                dataString = System.Text.Encoding.Default.GetString(data);
+                byte[] data = getTargetOutBytes(TargetOutData); // target packet is 9 bytes long.
 
                 //
                 // Write the data.
-                ComPort.WriteLine(dataString);
+                ComPort.Write(data, 0, data.Length);
             }
             else if (controlState == 'M')
             {
                 byte[] data = new byte[21]; // control data packet size is 21 bytes.
 
-                //
-                // Build a buffer to send to the platform.
-                data[0] = Convert.ToByte(ControlOutData.type);
-                //data[1] = Convert.ToByte(ControlOutData.flyordrive);
-                //data[2] = Convert.ToByte(ControlOutData.fdConfirm);
-                //data[3] = Convert.ToByte(ControlOutData.throttle);
-                //data[7] = Convert.ToByte(ControlOutData.roll);
-                //data[11] = Convert.ToByte(ControlOutData.pitch);
-                //data[14] = Convert.ToByte(ControlOutData.yaw);
-                //data[18] = Convert.ToByte(ControlOutData.payloadRelease);
-                //data[19] = Convert.ToByte(ControlOutData.prConfirm);
-
-                //
-                // Convert to string to write to the radio.
-                //dataString = System.Text.Encoding.Default.GetChars(data);
 
                 //
                 // Write the data.
