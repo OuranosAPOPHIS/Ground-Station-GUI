@@ -196,18 +196,39 @@ namespace WpfApplication2
 
         //
         // Output data struct.
-        //[StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ControlOutDataPacket
         {
+            public byte pad1;
+            public byte pad2;
+            public byte pad3;
+            public byte type;          // Target or Control command? T or C?
             public float throttle;   // Desired throttle level.
+            public float throttle2; // Desired throttle of left wheel in ground mode.
             public float roll;         // Desired roll angle.
             public float pitch;        // Desired pitch angle.
             public float yaw;          // Desired yaw angle.
-            public char type;          // Target or Control command? T or C?
-            public char flyordrive;     // vehicle flying or driving?
-            public char fdConfirm;      // fly or drive confirmation;
+            public byte flyordrive;     // vehicle flying or driving?
+            public byte fdConfirm;      // fly or drive confirmation;
             public bool payloadRelease;    // Release the payload command.
             public bool prConfirm;         // Confirmation to release payload command.
+
+            public ControlOutDataPacket(byte initialType)
+            {
+                pad1 = 0xFF;
+                pad2 = 0xFF;
+                pad3 = 0xFF;
+                type = initialType;
+                throttle = 0x00;
+                throttle2 = 0x00;
+                roll = 0x00;
+                pitch = 0x00;
+                yaw = 0x00;
+                flyordrive = 0x44;
+                fdConfirm = 0x44;
+                payloadRelease = false;
+                prConfirm = false;
+            }
         }
 
         byte[] getControlOutBytes(ControlOutDataPacket sCODP)
@@ -224,17 +245,17 @@ namespace WpfApplication2
 
         //
         // Output data struct for autonomous control.
-        //[StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct TargetOutDataPacket
         {
             public byte pad1;
             public byte pad2;
             public byte pad3;
-            public char type;          // Target or Control command? T or C?
+            public byte type;          // Target or Control command? T or C?
             public float targetLat;    // Target latitude
             public float targetLong;   // Target longitude
 
-            public TargetOutDataPacket (char initialType)
+            public TargetOutDataPacket (byte initialType)
             {
                 pad1 = 0xFF;
                 pad2 = 0xFF;
@@ -259,11 +280,11 @@ namespace WpfApplication2
         
         //
         // Global variable to store output data.
-        ControlOutDataPacket ControlOutData = new ControlOutDataPacket();
+        ControlOutDataPacket ControlOutData = new ControlOutDataPacket(0x00);
 
         //
         // Global variable to store target output data.
-        TargetOutDataPacket TargetOutData = new TargetOutDataPacket('\0');
+        TargetOutDataPacket TargetOutData = new TargetOutDataPacket(0x00);
         
         //
         // Function to initialize the serial port on the machine.
@@ -448,11 +469,9 @@ namespace WpfApplication2
         // Send data packet to the platform.
         public void WriteData()
         {
-            string dataString;
-
             if (controlState == 'A')
             {
-                byte[] data = getTargetOutBytes(TargetOutData); // target packet is 9 bytes long.
+                byte[] data = getTargetOutBytes(TargetOutData); // target packet is 12 bytes long.
 
                 //
                 // Write the data.
@@ -460,12 +479,12 @@ namespace WpfApplication2
             }
             else if (controlState == 'M')
             {
-                byte[] data = new byte[21]; // control data packet size is 21 bytes.
+                byte[] datam = getControlOutBytes(ControlOutData); // control data packet size is 28 bytes.
 
 
                 //
                 // Write the data.
-                //ComPort.Write(dataString, 0, 21);
+                ComPort.Write(datam, 0, datam.Length);
             }
         }
 
@@ -534,7 +553,7 @@ namespace WpfApplication2
                 {
                     //
                     // Autonomous control. Just send lat and long and T for type to platform.
-                    TargetOutData.type = 'T';
+                    TargetOutData.type = 0x54;
                     TargetOutData.targetLat = this.latitude;
                     TargetOutData.targetLong = this.longitude;
                 }
@@ -542,10 +561,10 @@ namespace WpfApplication2
                 {
                     //
                     // Send a '0', indicating bad data, ignore the target lat and long.
-                    TargetOutData.type = '0';
+                    TargetOutData.type = 0x30;
                 }
             }
-            else // Manual mode, control the platform with the controller.
+            else if (controlState == 'M') // Manual mode, control the platform with the controller.
             {
                 //
                 // Refresh the button presses on the controller.
@@ -553,12 +572,12 @@ namespace WpfApplication2
 
                 //
                 // Set the type of command.
-                ControlOutData.type = 'C';
+                ControlOutData.type = 0x43;
 
                 //
                 // Check the throttle level. Ignore any x value on the right stick.
                 // This will be a % from 0.0 to 1.0.
-                ControlOutData.throttle = (Single)controller.rightThumb.Y;
+                ControlOutData.throttle = (Single)controller.rightThumb.X;
 
                 //
                 // Check if we are driving or flying.
@@ -566,17 +585,18 @@ namespace WpfApplication2
                 {
                     //
                     // Travelling on the ground. Ignore pitch and roll.
-                    ControlOutData.yaw = (Single)controller.leftThumb.X;
+                    ControlOutData.throttle2 = (Single)controller.leftThumb.X;
                     ControlOutData.pitch = 0.0F;
                     ControlOutData.roll = 0.0F;
+                    ControlOutData.yaw = 0.0F;
                 }
                 else if (inputData.movement == 'A')
                 {
                     //
                     // We are flying.
                     // Calculate the values of the left analog stick.
-                    ControlOutData.pitch = (Single)controller.leftThumb.Y;
-                    ControlOutData.roll = (Single)controller.leftThumb.X;
+                    ControlOutData.pitch = (Single)controller.leftThumb.X;
+                    ControlOutData.roll = (Single)controller.leftThumb.Y;
 
                     //
                     // Use the left and right triggers to calaculate yaw "rate". 
@@ -586,11 +606,11 @@ namespace WpfApplication2
 
                 //
                 // Proof that controller works.
-                if (controller.leftTrigger > 1.0)
+                if (controller.rightThumb.X > 0.1)
                 {
-                    this.Timer.Text = controller.leftThumb.X.ToString();
+                    this.Timer.Text = controller.rightThumb.X.ToString();
                 }
-                else if (controller.rightTrigger > 1.0)
+                else if (controller.leftThumb.X > 0.1)
                 {
                     this.Timer.Text = controller.rightTrigger.ToString();
                 }
@@ -601,16 +621,16 @@ namespace WpfApplication2
                 {
                     //
                     // Start button is pressed, change from gnd travel to air travel.
-                    if (ControlOutData.flyordrive == 'D')
+                    if (ControlOutData.flyordrive == 0x44)
                     {
-                        ControlOutData.flyordrive = 'F';
-                        ControlOutData.fdConfirm = 'F';
+                        ControlOutData.flyordrive = 0x46;
+                        ControlOutData.fdConfirm = 0x46;
                         this.FlyorDrive.Text = "FLYING";
                     }
                     else
                     {
-                        ControlOutData.flyordrive = 'D';
-                        ControlOutData.fdConfirm = 'D';
+                        ControlOutData.flyordrive = 0x44;
+                        ControlOutData.fdConfirm = 0x44;
                         this.FlyorDrive.Text = "DRIVING";
                     }
                 }
