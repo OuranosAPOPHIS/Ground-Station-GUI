@@ -50,15 +50,15 @@ namespace WpfApplication2
             // Analog stick positions.
             leftThumb.X = (Math.Abs((float)gamepad.LeftThumbX) < deadband) ? 0 : (float)gamepad.LeftThumbX / short.MinValue * -1;
             leftThumb.Y = (Math.Abs((float)gamepad.LeftThumbY) < deadband) ? 0 : (float)gamepad.LeftThumbY / short.MaxValue * 1;
-            rightThumb.Y = (Math.Abs((float)gamepad.RightThumbX) < deadband) ? 0 : (float)gamepad.RightThumbX / short.MaxValue * 1;
-            rightThumb.X = (Math.Abs((float)gamepad.RightThumbY) < deadband) ? 0 : (float)gamepad.RightThumbY / short.MaxValue * 1;
+            rightThumb.X = (Math.Abs((float)gamepad.RightThumbX) < deadband) ? 0 : (float)gamepad.RightThumbX / short.MaxValue * 1;
+            rightThumb.Y = (Math.Abs((float)gamepad.RightThumbY) < deadband) ? 0 : (float)gamepad.RightThumbY / short.MaxValue * 1;
 
             //
             // Bitwise mapping of the buttons pressed.
             buttonState = gamepad.Buttons;
 
             leftTrigger = gamepad.LeftTrigger;
-            rightTrigger = gamepad.RightTrigger;            
+            rightTrigger = gamepad.RightTrigger;
         }
     }
 
@@ -95,6 +95,10 @@ namespace WpfApplication2
 
             // add handler to call closed function upon program exit
             this.Closed += new EventHandler(MainWindow_Closed);
+
+            //
+            // Set initial movement as driving.
+            inputData.movement = 'D';
         }
 
         //
@@ -399,10 +403,10 @@ namespace WpfApplication2
             this.posX.Text = inputData.posX.ToString();
             this.posY.Text = inputData.posY.ToString();
             this.posZ.Text = inputData.posZ.ToString();
-            if (inputData.movement == 'G')
-                this.FlyorDrive.Text = "Driving";
+            if (inputData.movement == 'D')
+                this.FlyorDrive.Text = "DRIVING";
             else
-                this.FlyorDrive.Text = "Flying";
+                this.FlyorDrive.Text = "FLYING";
             this.Roll.Text = inputData.roll.ToString();
             this.Pitch.Text = inputData.pitch.ToString();
             this.Yaw.Text = inputData.yaw.ToString();
@@ -577,42 +581,42 @@ namespace WpfApplication2
                 //
                 // Check the throttle level. Ignore any x value on the right stick.
                 // This will be a % from 0.0 to 1.0.
-                ControlOutData.throttle = (Single)controller.rightThumb.X;
+                ControlOutData.throttle = (Single)controller.rightThumb.Y;
 
                 //
                 // Check if we are driving or flying.
-                if (inputData.movement == 'G')
+                if (inputData.movement == 'D')
                 {
                     //
                     // Travelling on the ground. Ignore pitch and roll.
-                    ControlOutData.throttle2 = (Single)controller.leftThumb.X;
+                    ControlOutData.throttle2 = (Single)controller.leftThumb.Y;
                     ControlOutData.pitch = 0.0F;
                     ControlOutData.roll = 0.0F;
                     ControlOutData.yaw = 0.0F;
                 }
-                else if (inputData.movement == 'A')
+                else if (inputData.movement == 'F')
                 {
                     //
                     // We are flying.
                     // Calculate the values of the left analog stick.
-                    ControlOutData.pitch = (Single)controller.leftThumb.X;
-                    ControlOutData.roll = (Single)controller.leftThumb.Y;
+                    ControlOutData.pitch = (Single)controller.leftThumb.Y;
+                    ControlOutData.roll = (Single)controller.leftThumb.X;
 
                     //
                     // Use the left and right triggers to calaculate yaw "rate". 
                     // Value ranges from 0 to 255 for triggers. 
-                    // TODO
-                }
-
-                //
-                // Proof that controller works.
-                if (controller.rightThumb.X > 0.1)
-                {
-                    this.Timer.Text = controller.rightThumb.X.ToString();
-                }
-                else if (controller.leftThumb.X > 0.1)
-                {
-                    this.Timer.Text = controller.rightTrigger.ToString();
+                    if (controller.rightTrigger > 0)
+                    {
+                        ControlOutData.yaw = (float)controller.rightTrigger;
+                    }
+                    else if (controller.leftTrigger > 0)
+                    {
+                        ControlOutData.yaw = (float)controller.leftTrigger * -1;
+                    }
+                    else
+                    {
+                        ControlOutData.yaw = 0.0F;
+                    }
                 }
 
                 //
