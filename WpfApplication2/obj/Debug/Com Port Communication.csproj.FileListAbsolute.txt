@@ -43,3 +43,23 @@ C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Stati
 C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.g.resources
 C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.Properties.Resources.resources
 C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\Com Port Communication.csproj.GenerateResource.Cache
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\APOPHISGS.exe.config
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\APOPHISGS.exe
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\APOPHISGS.pdb
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\APOPHISGS.exe.CodeAnalysisLog.xml
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\APOPHISGS.exe.lastcodeanalysissucceeded
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\SharpDX.dll
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\SharpDX.XInput.dll
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\SharpDX.xml
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\bin\Debug\SharpDX.XInput.xml
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\Home.g.cs
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\App.g.cs
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS_MarkupCompile.cache
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS_MarkupCompile.lref
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\Home.baml
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS.g.resources
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS.Properties.Resources.resources
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\Com Port Communication.csproj.GenerateResource.Cache
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS.exe
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS.pdb
+D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\Com Port Communication.csprojResolveAssemblyReference.cache
