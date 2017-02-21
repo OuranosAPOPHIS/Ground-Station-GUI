@@ -16,13 +16,11 @@ namespace APOPHISGS
     public partial class MainWindow : Window, IDisposable
     {
         // Declare the serial com port
-        SerialPort COMPort = new SerialPort();
+        SerialPort comPort = new SerialPort();
 
-        internal delegate void SerialDataReceivedEventHandlerDelegate(object sender, SerialDataReceivedEventArgs e);
-
-        internal delegate void DispatcherTimerTick(object sender, EventArgs e);
-
-        delegate void SetTextCallback(string text);
+        //
+        // Set up a controller.
+        XInputController controller = new XInputController();
 
         //
         // True will be autonomous mode. False will be manual mode.
@@ -50,12 +48,9 @@ namespace APOPHISGS
 
         public float Longitude { get; set; }
 
-        //
-        // Set up a Controller.
-        XInputController Controller { get; set; } = new XInputController();
 
         //
-        // Set up a timer for the Controller.
+        // Set up a timer for the controller.
         DispatcherTimer PacketUpdate { get; set; } = new DispatcherTimer();         
 
         //
@@ -79,12 +74,18 @@ namespace APOPHISGS
         ControlOutDataPacket ControlOutData { get; set; } = new ControlOutDataPacket();
 
         TargetOutDataPacket TargetOutData { get; set; } = new TargetOutDataPacket();
-        
+
+        internal delegate void SerialDataReceivedEventHandlerDelegate(object sender, SerialDataReceivedEventArgs e);
+
+        internal delegate void DispatcherTimerTick(object sender, EventArgs e);
+
+        delegate void SetTextCallback(string text);
+
         public MainWindow()
         {
             InitializeComponent();
             
-            COMPort.DataReceived += new SerialDataReceivedEventHandler(COMPortDataReceived);
+            comPort.DataReceived += new SerialDataReceivedEventHandler(COMPortDataReceived);
 
             // add handler to call closed function upon program exit
             Closed += new EventHandler(MainWindowClosed);
@@ -113,7 +114,7 @@ namespace APOPHISGS
 
             //
             // Get the size of the incoming buffer.
-            size = COMPort.BytesToRead;
+            size = comPort.BytesToRead;
             DataStreamSize = size;
 
             //
@@ -122,13 +123,13 @@ namespace APOPHISGS
             {
                 if (size > 100)
                 {
-                    COMPort.DiscardInBuffer();
+                    comPort.DiscardInBuffer();
                 }
                 else
                 {
                     //
                     // Read the data from the incoming buffer.
-                    COMPort.Read(rawData, 0, size);
+                    comPort.Read(rawData, 0, size);
 
                     InputData.FromBytes(rawData);
                     Dispatcher.Invoke(() => SetText());
@@ -202,7 +203,7 @@ namespace APOPHISGS
 
                     //
                     // Write the data.
-                    COMPort.Write(data, 0, data.Length);
+                    comPort.Write(data, 0, data.Length);
 
                     break;
                 }
@@ -211,7 +212,7 @@ namespace APOPHISGS
 
                     //
                     // Write the data.
-                    COMPort.Write(datam, 0, datam.Length);
+                    comPort.Write(datam, 0, datam.Length);
 
                     break;
                 }
@@ -219,8 +220,8 @@ namespace APOPHISGS
         }
 
         //
-        // Controller timer event handler. Called every 250 ms to check the 
-        // state of the Controller. 
+        // controller timer event handler. Called every 250 ms to check the 
+        // state of the controller. 
         private void UpdateTimerTick(object sender, EventArgs e)
         {
             switch (ControlState)
@@ -246,7 +247,7 @@ namespace APOPHISGS
                         break;
                     }
                 case 'M':
-                    { // Manual mode, control the platform with the Controller.    
+                    { // Manual mode, control the platform with the controller.    
                       //
                       // Set the type of command.
                         ControlOutData.Type = 'C';
@@ -254,7 +255,7 @@ namespace APOPHISGS
                         //
                         // Check the throttle level. Ignore any x value on the right stick.
                         // This will be a % from 0.0 to 1.0.
-                        ControlOutData.Throttle = (float)Controller.RightThumb.Y;
+                        ControlOutData.Throttle = (float)controller.RightThumb.Y;
 
                         //
                         // Check if we are driving or flying.
@@ -264,7 +265,7 @@ namespace APOPHISGS
                                 {
                                     //
                                     // Travelling on the ground. Ignore pitch and roll.
-                                    ControlOutData.Throttle2 = (float)Controller.LeftThumb.Y;
+                                    ControlOutData.Throttle2 = (float)controller.LeftThumb.Y;
                                     ControlOutData.Pitch = 0.0F;
                                     ControlOutData.Roll = 0.0F;
                                     ControlOutData.Yaw = 0.0F;
@@ -275,19 +276,19 @@ namespace APOPHISGS
                                     //
                                     // We are flying.
                                     // Calculate the values of the left analog stick.
-                                    ControlOutData.Pitch = (float)Controller.LeftThumb.Y;
-                                    ControlOutData.Roll = (float)Controller.LeftThumb.X;
+                                    ControlOutData.Pitch = (float)controller.LeftThumb.Y;
+                                    ControlOutData.Roll = (float)controller.LeftThumb.X;
 
                                     //
                                     // Use the left and right triggers to calaculate yaw "rate". 
                                     // Value ranges from 0 to 255 for triggers. 
-                                    if (Controller.RightTrigger > 0)
+                                    if (controller.RightTrigger > 0)
                                     {
-                                        ControlOutData.Yaw = Controller.RightTrigger;
+                                        ControlOutData.Yaw = controller.RightTrigger;
                                     }
-                                    else if (Controller.LeftTrigger > 0)
+                                    else if (controller.LeftTrigger > 0)
                                     {
-                                        ControlOutData.Yaw = Controller.LeftTrigger * -1;
+                                        ControlOutData.Yaw = controller.LeftTrigger * -1;
                                     }
                                     else
                                     {
@@ -299,7 +300,7 @@ namespace APOPHISGS
 
                         //
                         // Check the state of the buttons.
-                        if (Convert.ToInt16(Controller.ButtonState) == Convert.ToInt16(GamepadButtonFlags.Start))
+                        if (Convert.ToInt16(controller.ButtonState) == Convert.ToInt16(GamepadButtonFlags.Start))
                         {
                             //
                             // Start button is pressed, change from gnd travel to air travel.
@@ -329,7 +330,7 @@ namespace APOPHISGS
             }
             //
             // Trigger a data packet send over the com port.
-            if (RadioConnected && (COMPort.BytesToRead == 0)) WriteData();
+            if (RadioConnected && (comPort.BytesToRead == 0)) WriteData();
         }
 
         //
@@ -349,23 +350,23 @@ namespace APOPHISGS
             {
                 btnCOMPortConnect.Content = "Disconnect";
 
-                COMPort.PortName = cbPorts.Text;
-                COMPort.BaudRate = Convert.ToInt32(cbBaudRate.Text);
-                COMPort.DataBits = 8;
-                COMPort.StopBits = StopBits.One;
-                COMPort.Handshake = Handshake.None;
-                COMPort.Parity = Parity.None;
+                comPort.PortName = cbPorts.Text;
+                comPort.BaudRate = Convert.ToInt32(cbBaudRate.Text);
+                comPort.DataBits = 8;
+                comPort.StopBits = StopBits.One;
+                comPort.Handshake = Handshake.None;
+                comPort.Parity = Parity.None;
 
                 //
                 // Check if port is open already
-                if (COMPort.IsOpen)
+                if (comPort.IsOpen)
                 {
-                    COMPort.Close();
-                    System.Windows.MessageBox.Show(string.Concat(COMPort.PortName, " failed to open."));
+                    comPort.Close();
+                    System.Windows.MessageBox.Show(string.Concat(comPort.PortName, " failed to open."));
                 }
                 else
                 {
-                    COMPort.Open();
+                    comPort.Open();
                 }
 
                 //
@@ -382,7 +383,7 @@ namespace APOPHISGS
             else
             {
                 btnCOMPortConnect.Content = "Connect";
-                COMPort.Close();
+                comPort.Close();
 
                 //
                 // Connection terminated.
@@ -429,7 +430,7 @@ namespace APOPHISGS
         private void btnSetUpdateRate_Click(object sender, RoutedEventArgs e)
         {
             //
-            // Initialize the Controller timer.
+            // Initialize the controller timer.
             PacketUpdate.Interval = TimeSpan.FromMilliseconds(250);
             PacketUpdate.Tick += UpdateTimerTick;
 
@@ -484,43 +485,43 @@ namespace APOPHISGS
         // Connect the selected controller
         private async void btnConnectController_Click(object sender, RoutedEventArgs e)
         {
-            if (Controller.IsConnected)
+            if (controller.IsConnected)
             {
-                await Controller.Disconnect();
+                await controller.Disconnect();
                 btnConnectController.Content = "Connect";
             }
             else {
                 //
-                // Initialize a Controller using XINPUT.
+                // Initialize a controller using XINPUT.
                 switch (cbController.Text)
                 {
                     case "1":
                         {
-                            await Controller.Connect(UserIndex.One);
+                            await controller.Connect(UserIndex.One);
                             break;
                         }
                     case "2":
                         {
-                            await Controller.Connect(UserIndex.Two);
+                            await controller.Connect(UserIndex.Two);
                             break;
                         }
                     case "3":
                         {
-                            await Controller.Connect(UserIndex.Three);
+                            await controller.Connect(UserIndex.Three);
                             break;
                         }
                     case "4":
                         {
-                            await Controller.Connect(UserIndex.Four);
+                            await controller.Connect(UserIndex.Four);
                             break;
                         }
                     default:
                         {
-                            await Controller.Connect(UserIndex.Any);
+                            await controller.Connect(UserIndex.Any);
                             break;
                         }
                 }
-                if (Controller.IsConnected)
+                if (controller.IsConnected)
                 {
                     //
                     // Change the button to say disconnect.
@@ -558,7 +559,7 @@ namespace APOPHISGS
         {
             //
             // Close the COM port before ending the program.
-            if (!COMPort.IsOpen) COMPort.Close();
+            if (!comPort.IsOpen) comPort.Close();
         }
 
         #region IDisposable Support
@@ -570,7 +571,8 @@ namespace APOPHISGS
             {
                 if (disposing)
                 {
-                    ((IDisposable)COMPort).Dispose();
+                    comPort.Dispose();
+                    controller.Dispose();
                 }
 
                 disposedValue = true;

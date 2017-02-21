@@ -8,7 +8,7 @@ using System.Numerics;
 namespace APOPHISGS
 {
     //
-    // Definition for the xinput Controller class.
+    // Definition for the xinput controller class.
     class XInputController : IDisposable
     {
         private Controller controller;
@@ -120,6 +120,7 @@ namespace APOPHISGS
                 {
                     disconnect?.Cancel();
                     if (pollTask != null) pollTask.RunSynchronously();
+                    disconnect.Dispose();
                     pollTask = null;
                     disconnect = null;
                     controller = null;

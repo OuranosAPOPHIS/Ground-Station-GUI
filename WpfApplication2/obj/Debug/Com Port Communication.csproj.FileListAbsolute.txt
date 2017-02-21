@@ -62,4 +62,3 @@ D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS
 D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\Com Port Communication.csproj.GenerateResource.Cache
 D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS.exe
 D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\APOPHISGS.pdb
-D:\Code\vs\OuranosAPOPHIS\ground-station-gui\WpfApplication2\obj\Debug\Com Port Communication.csprojResolveAssemblyReference.cache
