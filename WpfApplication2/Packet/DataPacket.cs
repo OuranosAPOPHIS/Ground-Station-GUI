@@ -101,7 +101,8 @@ namespace APOPHISGS.Packet
 
         public bool PayloadBay { get { return data.payBay; } }
 
-        public DataPacket(char defaultMovement = 'D') {
+        public DataPacket(char defaultMovement = 'D')
+        {
             data.magic1 = 0;
             data.magic2 = 0;
             data.magic3 = 0;

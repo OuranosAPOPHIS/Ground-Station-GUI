@@ -47,11 +47,10 @@ namespace APOPHISGS
         public float Latitude { get; set; }
 
         public float Longitude { get; set; }
-
-
+        
         //
         // Set up a timer for the controller.
-        DispatcherTimer PacketUpdate { get; set; } = new DispatcherTimer();         
+        DispatcherTimer PacketUpdate { get; set; } = new DispatcherTimer();
 
         //
         // Setup a system clock to count the time between data packets.
@@ -64,11 +63,11 @@ namespace APOPHISGS
         // Open a log file to write the data to.
         // using (System.IO.StreamWriter sw = File.AppendText(" c:\\test.txt"));
         //string lines = "First Line.\nSecond Line.\nThird Line.\n";
-        
+
         //
         // Global variable to store all th data.
         DataPacket InputData { get; set; } = new DataPacket();
-        
+
         //
         // Global variable to store output data.
         ControlOutDataPacket ControlOutData { get; set; } = new ControlOutDataPacket();
@@ -84,7 +83,7 @@ namespace APOPHISGS
         public MainWindow()
         {
             InitializeComponent();
-            
+
             comPort.DataReceived += new SerialDataReceivedEventHandler(COMPortDataReceived);
 
             // add handler to call closed function upon program exit
@@ -175,9 +174,9 @@ namespace APOPHISGS
             AirMtr1.Background = InputData.AirMotor1 ? Brushes.GreenYellow : Brushes.Red;
             AirMtr2.Background = InputData.AirMotor2 ? Brushes.GreenYellow : Brushes.Red;
             AirMtr3.Background = InputData.AirMotor3 ? Brushes.GreenYellow : Brushes.Red;
-            AirMtr4.Background = InputData.AirMotor4 ? Brushes.GreenYellow: Brushes.Red;
+            AirMtr4.Background = InputData.AirMotor4 ? Brushes.GreenYellow : Brushes.Red;
             USensor1.Background = InputData.uS1 ? Brushes.GreenYellow : Brushes.Red;
-            USensor2.Background = InputData.uS2  ? Brushes.GreenYellow: Brushes.Red;
+            USensor2.Background = InputData.uS2 ? Brushes.GreenYellow : Brushes.Red;
             USensor3.Background = InputData.uS3 ? Brushes.GreenYellow : Brushes.Red;
             USensor4.Background = InputData.uS4 ? Brushes.GreenYellow : Brushes.Red;
             USensor5.Background = InputData.uS5 ? Brushes.GreenYellow : Brushes.Red;
@@ -187,35 +186,38 @@ namespace APOPHISGS
                 PayloadDeployed.Background = Brushes.GreenYellow;
                 PayloadDeployed.Text = "Deployed";
             }
-            else 
+            else
             {
                 PayloadDeployed.Background = Brushes.Red;
             }
         }
-        
+
         //
         // Send data packet to the platform.
         public void WriteData()
         {
-            switch (ControlState) {
-                case 'A': {
-                    byte[] data = TargetOutData.GetBytes();
+            switch (ControlState)
+            {
+                case 'A':
+                    {
+                        byte[] data = TargetOutData.GetBytes();
 
-                    //
-                    // Write the data.
-                    comPort.Write(data, 0, data.Length);
+                        //
+                        // Write the data.
+                        comPort.Write(data, 0, data.Length);
 
-                    break;
-                }
-                case 'M': {
-                    byte[] datam = ControlOutData.GetBytes();
+                        break;
+                    }
+                case 'M':
+                    {
+                        byte[] datam = ControlOutData.GetBytes();
 
-                    //
-                    // Write the data.
-                    comPort.Write(datam, 0, datam.Length);
+                        //
+                        // Write the data.
+                        comPort.Write(datam, 0, datam.Length);
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -399,29 +401,32 @@ namespace APOPHISGS
         {
             //
             // Get the color of the autotonomous box.
-            switch (ControlState) {
-                case 'A': {
-                    //
-                    // Currently in auto mode. Send command to switch to manual.
-                    AutoControl.Background = Brushes.Red;
-                    ManualControl.Background = Brushes.GreenYellow;
+            switch (ControlState)
+            {
+                case 'A':
+                    {
+                        //
+                        // Currently in auto mode. Send command to switch to manual.
+                        AutoControl.Background = Brushes.Red;
+                        ManualControl.Background = Brushes.GreenYellow;
 
-                    //
-                    // Send command to platform.
-                    ControlState = 'M';
-                    break;
-                }
-                case 'M': {
-                    //
-                    // Currently in manual mode. Send comand to switch to auto.
-                    ManualControl.Background = Brushes.Red;
-                    AutoControl.Background = Brushes.GreenYellow;
+                        //
+                        // Send command to platform.
+                        ControlState = 'M';
+                        break;
+                    }
+                case 'M':
+                    {
+                        //
+                        // Currently in manual mode. Send comand to switch to auto.
+                        ManualControl.Background = Brushes.Red;
+                        AutoControl.Background = Brushes.GreenYellow;
 
-                    //
-                    // Send command to platform.
-                    ControlState = 'A';
-                    break;
-                }
+                        //
+                        // Send command to platform.
+                        ControlState = 'A';
+                        break;
+                    }
             }
         }
 
@@ -450,7 +455,7 @@ namespace APOPHISGS
             targetLat = TargetLatitude.Text;
             targetLong = TargetLongitude.Text;
 
-            if(targetLat == String.Empty || targetLong == String.Empty)
+            if (targetLat == String.Empty || targetLong == String.Empty)
             {
                 //
                 // User didn't input any data.
@@ -490,7 +495,8 @@ namespace APOPHISGS
                 await controller.Disconnect();
                 btnConnectController.Content = "Connect";
             }
-            else {
+            else
+            {
                 //
                 // Initialize a controller using XINPUT.
                 switch (cbController.Text)
@@ -525,9 +531,10 @@ namespace APOPHISGS
                 {
                     //
                     // Change the button to say disconnect.
-                    btnConnectController.Content = "Connected!";
+                    btnConnectController.Content = $"Connected to C{controller.UserIndex}";
                 }
-                else {
+                else
+                {
                     System.Windows.MessageBox.Show("Could not connect to controller!");
                 }
             }
@@ -578,7 +585,7 @@ namespace APOPHISGS
                 disposedValue = true;
             }
         }
-        
+
         // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {

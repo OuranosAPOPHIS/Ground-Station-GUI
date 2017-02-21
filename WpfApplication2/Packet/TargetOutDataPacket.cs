@@ -21,11 +21,14 @@ namespace APOPHISGS.Packet
 
         private Packet data;
 
-        public byte[] Magic { 
-            get {
+        public byte[] Magic
+        {
+            get
+            {
                 return new byte[] { data.Magic1, data.Magic2, data.Magic3 };
-            } 
-            set {
+            }
+            set
+            {
                 if (value.Length != 3) throw new ArgumentOutOfRangeException("Value must have a byte array length of 3.");
                 data.Magic1 = value[0];
                 data.Magic2 = value[1];
@@ -49,7 +52,7 @@ namespace APOPHISGS.Packet
             TargetLat = 0;
             TargetLong = 0;
         }
-        
+
         public byte[] GetBytes() => data.GetBytes();
 
         public void FromBytes(byte[] packetArr)

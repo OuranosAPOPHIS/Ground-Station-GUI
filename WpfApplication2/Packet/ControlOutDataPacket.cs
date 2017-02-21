@@ -44,8 +44,8 @@ namespace APOPHISGS.Packet
             }
         }
 
-        public char Type { get { return Convert.ToChar(data.Type); } set { data.Type = Convert.ToByte(value); } }     
-                   
+        public char Type { get { return Convert.ToChar(data.Type); } set { data.Type = Convert.ToByte(value); } }
+
         public float Throttle { get { return data.Throttle; } set { data.Throttle = value; } }
 
         public float Throttle2 { get { return data.Throttle2; } set { data.Throttle2 = value; } }
