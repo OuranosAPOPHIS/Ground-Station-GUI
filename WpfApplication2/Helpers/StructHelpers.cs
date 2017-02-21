@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace APOPHISGS.Helpers
+namespace APOPHIS.GroundStation.Helpers
 {
     static class StructHelpers
     {

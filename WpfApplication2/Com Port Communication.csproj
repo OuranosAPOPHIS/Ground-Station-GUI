@@ -7,8 +7,8 @@
     <ProjectGuid>{A4B8AD87-0882-4A5B-84EA-F6F95DB67235}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>APOPHISGS</RootNamespace>
-    <AssemblyName>APOPHISGS</AssemblyName>
+    <RootNamespace>APOPHIS.GroundStation</RootNamespace>
+    <AssemblyName>APOPHIS-GS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>APOPHISGS.App</StartupObject>
+    <StartupObject>APOPHIS.GroundStation.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">

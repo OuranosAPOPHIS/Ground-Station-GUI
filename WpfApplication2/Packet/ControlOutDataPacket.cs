@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using APOPHISGS.Helpers;
+using APOPHIS.GroundStation.Helpers;
 
-namespace APOPHISGS.Packet
+namespace APOPHIS.GroundStation.Packet
 {
     class ControlOutDataPacket : IPacket
     {

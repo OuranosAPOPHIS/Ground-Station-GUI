@@ -1,11 +1,10 @@
-﻿using System;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Threading;
-using System.Numerics;
 
-namespace APOPHISGS
+namespace APOPHIS.GroundStation
 {
     //
     // Definition for the xinput controller class.
@@ -42,7 +41,7 @@ namespace APOPHISGS
             }
             set
             {
-                if (0 < value && value < 1001)
+                if (1 <= value && value <= 1000)
                 {
                     pollDelay = 1000 / value;
                 }
@@ -61,7 +60,6 @@ namespace APOPHISGS
         public float LeftDeadZone { get; set; } = Gamepad.LeftThumbDeadZone / short.MaxValue;
         public float RightDeadZone { get; set; } = Gamepad.LeftThumbDeadZone / short.MaxValue;
         public byte TriggerThreshold { get; set; } = Gamepad.TriggerThreshold / byte.MaxValue;
-
         public Vector LeftThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.LeftThumbX, -Gamepad.LeftThumbY, LeftDeadZone) : new Vector(0, 0); } }
         public Vector RightThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.RightThumbX, -Gamepad.RightThumbY, RightDeadZone) : new Vector(0, 0); } }
         public byte LeftTrigger { get { return ((Gamepad.LeftTrigger) >= TriggerThreshold && IsConnected) ? Gamepad.LeftTrigger : ((byte)0); } }

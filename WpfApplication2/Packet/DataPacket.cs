@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using APOPHISGS.Helpers;
+using APOPHIS.GroundStation.Helpers;
 
-namespace APOPHISGS.Packet
+namespace APOPHIS.GroundStation.Packet
 {
     class DataPacket : IPacket
     {

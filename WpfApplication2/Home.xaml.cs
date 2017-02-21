@@ -2,13 +2,12 @@ using System;
 using System.IO.Ports;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
 using SharpDX.XInput;
-using APOPHISGS.Packet;
+using APOPHIS.GroundStation.Packet;
 
-namespace APOPHISGS
+namespace APOPHIS.GroundStation
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -26,7 +25,7 @@ namespace APOPHISGS
         // True will be autonomous mode. False will be manual mode.
         // Initialize this to manual mode. 'M' for manual. 'A' for autonomous.
         char ControlState { get; set; } = 'M';
-
+        
         //
         // My stuff.
 
@@ -89,9 +88,7 @@ namespace APOPHISGS
             // add handler to call closed function upon program exit
             Closed += new EventHandler(MainWindowClosed);
         }
-
-
-
+        
         //
         // Com port received data event handler. Called by the operating system when
         // there is data available in the rx buffer.
@@ -131,7 +128,7 @@ namespace APOPHISGS
                     comPort.Read(rawData, 0, size);
 
                     InputData.FromBytes(rawData);
-                    Dispatcher.Invoke(() => SetText());
+                    Dispatcher?.Invoke(() => SetText());
                 }
             }
         }
@@ -531,7 +528,7 @@ namespace APOPHISGS
                 {
                     //
                     // Change the button to say disconnect.
-                    btnConnectController.Content = $"Connected to C{controller.UserIndex}";
+                    btnConnectController.Content = $"Controller {controller.UserIndex}";
                 }
                 else
                 {

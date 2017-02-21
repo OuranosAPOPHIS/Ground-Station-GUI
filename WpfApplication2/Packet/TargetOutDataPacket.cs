@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using APOPHISGS.Helpers;
+using APOPHIS.GroundStation.Helpers;
 
-namespace APOPHISGS.Packet
+namespace APOPHIS.GroundStation.Packet
 {
     class TargetOutDataPacket : IPacket
     {
@@ -35,7 +35,7 @@ namespace APOPHISGS.Packet
                 data.Magic3 = value[2];
             }
         }
-
+        
         public char Type { get { return Convert.ToChar(data.Type); } set { data.Type = Convert.ToByte(value); } }
 
         public float TargetLat { get { return data.TargetLat; } set { data.TargetLong = value; } }

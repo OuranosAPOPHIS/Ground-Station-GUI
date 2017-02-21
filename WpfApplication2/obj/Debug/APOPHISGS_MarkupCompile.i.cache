@@ -5,7 +5,7 @@ winexe
 C#
 .cs
 P:\code\apophis\gs\WpfApplication2\obj\Debug\
-APOPHISGS
+APOPHIS.GroundStation
 none
 false
 CODE_ANALYSIS;DEBUG;TRACE
@@ -16,5 +16,5 @@ P:\code\apophis\gs\WpfApplication2\App.xaml
 68-1611839478
 Home.xaml;
 
-True
+False
 
