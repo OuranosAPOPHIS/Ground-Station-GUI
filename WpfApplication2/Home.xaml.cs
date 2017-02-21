@@ -214,8 +214,8 @@ namespace WpfApplication2
             public float yaw;          // Desired yaw angle.
             public byte flyordrive;     // vehicle flying or driving?
             public byte fdConfirm;      // fly or drive confirmation;
-            public bool payloadRelease;    // Release the payload command.
-            public bool prConfirm;         // Confirmation to release payload command.
+            public byte payloadRelease;    // Release the payload command.
+            public byte prConfirm;         // Confirmation to release payload command.
 
             public ControlOutDataPacket(byte initialType)
             {
@@ -230,8 +230,8 @@ namespace WpfApplication2
                 yaw = 0x00;
                 flyordrive = 0x44;
                 fdConfirm = 0x44;
-                payloadRelease = false;
-                prConfirm = false;
+                payloadRelease = 0x00;
+                prConfirm = 0x00;
             }
         }
 
@@ -246,6 +246,10 @@ namespace WpfApplication2
             Marshal.FreeHGlobal(ptr);
             return arr;
         }
+
+        //
+        // Global variable to store output data.
+        ControlOutDataPacket ControlOutData = new ControlOutDataPacket(0x00);
 
         //
         // Output data struct for autonomous control.
@@ -281,11 +285,7 @@ namespace WpfApplication2
             Marshal.FreeHGlobal(ptr);
             return arr;
         }
-        
-        //
-        // Global variable to store output data.
-        ControlOutDataPacket ControlOutData = new ControlOutDataPacket(0x00);
-
+       
         //
         // Global variable to store target output data.
         TargetOutDataPacket TargetOutData = new TargetOutDataPacket(0x00);
@@ -336,16 +336,6 @@ namespace WpfApplication2
             Int32 currentMillisecond;
 
             //
-            // Packet received! Get the current time.
-            millisecond = DateTime.Now;
-            currentMillisecond = millisecond.Millisecond;
-            deltaT = currentMillisecond - previousMillisecond;
-            if (deltaT < 0)
-                deltaT = deltaT + 1000;
-
-            previousMillisecond = currentMillisecond;
-
-            //
             // Get the size of the incoming buffer.
             size = ComPort.BytesToRead;
             dataStreamSize = size;
@@ -371,6 +361,16 @@ namespace WpfApplication2
                     this.Dispatcher.Invoke(() =>
                         SetText());
                 }
+
+                //
+                // Packet received! Get the current time.
+                millisecond = DateTime.Now;
+                currentMillisecond = millisecond.Millisecond;
+                deltaT = currentMillisecond - previousMillisecond;
+                if (deltaT < 0)
+                    deltaT = deltaT + 1000;
+
+                previousMillisecond = currentMillisecond;
             }
         }
 
@@ -462,6 +462,7 @@ namespace WpfApplication2
             {
                 this.PayloadDeployed.Background = Brushes.GreenYellow;
                 this.PayloadDeployed.Text = "Deployed";
+                payloadRelease = true;
             }
             else
                 this.PayloadDeployed.Background = Brushes.Red;
@@ -483,12 +484,11 @@ namespace WpfApplication2
             }
             else if (controlState == 'M')
             {
-                byte[] datam = getControlOutBytes(ControlOutData); // control data packet size is 28 bytes.
-
+                byte[] data = getControlOutBytes(ControlOutData); // control data packet size is 28 bytes.
 
                 //
                 // Write the data.
-                ComPort.Write(datam, 0, datam.Length);
+                ComPort.Write(data, 0, data.Length);
             }
         }
 
@@ -638,15 +638,8 @@ namespace WpfApplication2
                         this.FlyorDrive.Text = "DRIVING";
                     }
                 }
-
-                //
-                // Check if payload has been deployed.
-                if (payloadRelease)
-                {
-                    ControlOutData.payloadRelease = true;
-                    ControlOutData.prConfirm = true;
-                }
             }
+
             //
             // Trigger a data packet send over the com port.
             if (radioConnected && (ComPort.BytesToRead == 0))
@@ -756,14 +749,13 @@ namespace WpfApplication2
             if (payloadRelease == false)
             {
                 //
-                // Set it to true.
-                payloadRelease = true;
-
-                //
                 // Change the GUI.
-                this.DeployPayload.Content = "Deployed";
-                this.PayloadDeployed.Background = Brushes.GreenYellow;
-                this.PayloadDeployed.Text = "Deployed";
+                this.PayloadDeployed.Background = Brushes.Yellow;
+                this.PayloadDeployed.Text = "Deploying";
+
+                ControlOutData.payloadRelease = 0x01;
+                ControlOutData.prConfirm = 0x01;
+
             }
             //
             // else do nothing. It is already deployed.
