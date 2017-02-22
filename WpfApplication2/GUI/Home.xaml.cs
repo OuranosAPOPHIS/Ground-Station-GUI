@@ -155,40 +155,40 @@ namespace APOPHIS.GroundStation.GUI {
       //
       // Update the GUI.
       txtUTC.Text = InputData.UTC.ToString();
-      GPSLatitude.Text = InputData.Latitude.ToString();
-      GPSLongitude.Text = InputData.Longitude.ToString();
-      AltitudeASL.Text = InputData.Altitude.ToString();
-      AltitudeAGL.Text = "0.000"; // TODO: Add a ground level feature.
-      accelX.Text = InputData.AccelX.ToString();
-      accelY.Text = InputData.AccelY.ToString();
-      accelZ.Text = InputData.AccelZ.ToString();
-      velX.Text = InputData.VelX.ToString();
-      velY.Text = InputData.VelY.ToString();
-      velZ.Text = InputData.VelZ.ToString();
-      posX.Text = InputData.PosX.ToString();
-      posY.Text = InputData.PosY.ToString();
-      posZ.Text = InputData.PosZ.ToString();
-      FlyOrDrive.Text = (InputData.Movement == 'D') ? "DRIVING" : "FLYING";
-      Roll.Text = InputData.Roll.ToString();
-      Pitch.Text = InputData.Pitch.ToString();
-      Yaw.Text = InputData.Yaw.ToString();
-      GndMtr1.Background = InputData.GroundMeter1 ? Brushes.GreenYellow : Brushes.Red;
-      GndMtr2.Background = InputData.GroundMeter2 ? Brushes.GreenYellow : Brushes.Red;
-      AirMtr1.Background = InputData.AirMotor1 ? Brushes.GreenYellow : Brushes.Red;
-      AirMtr2.Background = InputData.AirMotor2 ? Brushes.GreenYellow : Brushes.Red;
-      AirMtr3.Background = InputData.AirMotor3 ? Brushes.GreenYellow : Brushes.Red;
-      AirMtr4.Background = InputData.AirMotor4 ? Brushes.GreenYellow : Brushes.Red;
-      USensor1.Background = InputData.uS1 ? Brushes.GreenYellow : Brushes.Red;
-      USensor2.Background = InputData.uS2 ? Brushes.GreenYellow : Brushes.Red;
-      USensor3.Background = InputData.uS3 ? Brushes.GreenYellow : Brushes.Red;
-      USensor4.Background = InputData.uS4 ? Brushes.GreenYellow : Brushes.Red;
-      USensor5.Background = InputData.uS5 ? Brushes.GreenYellow : Brushes.Red;
-      USensor6.Background = InputData.uS6 ? Brushes.GreenYellow : Brushes.Red;
+      txtGPSLatitude.Text = InputData.Latitude.ToString();
+      txtGPSLongitude.Text = InputData.Longitude.ToString();
+      txtAltitudeASL.Text = InputData.Altitude.ToString();
+      txtAltitudeAGL.Text = "0.000"; // TODO: Add a ground level feature.
+      txtAccelX.Text = InputData.AccelX.ToString();
+      txtAccelY.Text = InputData.AccelY.ToString();
+      txtAccelZ.Text = InputData.AccelZ.ToString();
+      txtVelX.Text = InputData.VelX.ToString();
+      txtVelY.Text = InputData.VelY.ToString();
+      txtVelZ.Text = InputData.VelZ.ToString();
+      txtPosX.Text = InputData.PosX.ToString();
+      txtPosY.Text = InputData.PosY.ToString();
+      txtPosZ.Text = InputData.PosZ.ToString();
+      txtFlyOrDrive.Text = (InputData.Movement == 'D') ? "DRIVING" : "FLYING";
+      txtRoll.Text = InputData.Roll.ToString();
+      txtPitch.Text = InputData.Pitch.ToString();
+      txtYaw.Text = InputData.Yaw.ToString();
+      txtGndMtr1.Background = InputData.GroundMeter1 ? Brushes.GreenYellow : Brushes.Red;
+      txtGndMtr2.Background = InputData.GroundMeter2 ? Brushes.GreenYellow : Brushes.Red;
+      txtAirMtr1.Background = InputData.AirMotor1 ? Brushes.GreenYellow : Brushes.Red;
+      txtAirMtr2.Background = InputData.AirMotor2 ? Brushes.GreenYellow : Brushes.Red;
+      txtAirMtr3.Background = InputData.AirMotor3 ? Brushes.GreenYellow : Brushes.Red;
+      txtAirMtr4.Background = InputData.AirMotor4 ? Brushes.GreenYellow : Brushes.Red;
+      txtUSensor1.Background = InputData.uS1 ? Brushes.GreenYellow : Brushes.Red;
+      txtUSensor2.Background = InputData.uS2 ? Brushes.GreenYellow : Brushes.Red;
+      txtUSensor3.Background = InputData.uS3 ? Brushes.GreenYellow : Brushes.Red;
+      txtUSensor4.Background = InputData.uS4 ? Brushes.GreenYellow : Brushes.Red;
+      txtUSensor5.Background = InputData.uS5 ? Brushes.GreenYellow : Brushes.Red;
+      txtUSensor6.Background = InputData.uS6 ? Brushes.GreenYellow : Brushes.Red;
       if (InputData.PayloadBay) {
-        PayloadDeployed.Background = Brushes.GreenYellow;
-        PayloadDeployed.Text = "Deployed";
+        txtPayloadDeployed.Background = Brushes.GreenYellow;
+        txtPayloadDeployed.Text = "Deployed";
       } else {
-        PayloadDeployed.Background = Brushes.Red;
+        txtPayloadDeployed.Background = Brushes.Red;
       }
     }
 
@@ -289,11 +289,11 @@ namespace APOPHIS.GroundStation.GUI {
               if (ControlOutData.FlyOrDrive == 'D') {
                 ControlOutData.FlyOrDrive = 'F';
                 ControlOutData.FDConfirm = 'F';
-                FlyOrDrive.Text = "FLYING";
+                txtFlyOrDrive.Text = "FLYING";
               } else {
                 ControlOutData.FlyOrDrive = 'D';
                 ControlOutData.FDConfirm = 'D';
-                FlyOrDrive.Text = "DRIVING";
+                txtFlyOrDrive.Text = "DRIVING";
               }
             }
 
@@ -453,10 +453,6 @@ namespace APOPHIS.GroundStation.GUI {
       }
     }
 
-    private void OnControllerEvent(object sender, XboxController.ControllerEventArgs e) {
-
-    }
-    
     //
     // When button is pressed, manual deploy the payload. 
     private void OnBtnDeployPayloadClick(object sender, RoutedEventArgs e) {
@@ -470,8 +466,8 @@ namespace APOPHIS.GroundStation.GUI {
         //
         // Change the GUI.
         DeployPayload.Content = "Deployed";
-        PayloadDeployed.Background = Brushes.GreenYellow;
-        PayloadDeployed.Text = "Deployed";
+        txtPayloadDeployed.Background = Brushes.GreenYellow;
+        txtPayloadDeployed.Text = "Deployed";
       }
     }
 
