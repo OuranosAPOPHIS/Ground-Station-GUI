@@ -78,6 +78,27 @@ namespace APOPHIS.GroundStation.GUI {
       
       _COMPort.DataReceived += COMPortDataReceived;
 
+      _controller.Connected += (sender, eventArgs) => {
+        btnConnectController.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
+          btnConnectController.Content = $"Disconnect";
+          Controller.Text = $"Controller {_controller.UserIndex}";
+          Controller.Background = Brushes.GreenYellow;
+        }));        
+      };
+
+      _controller.ConnectedFailed += (sender, eventArgs) => {      
+          MessageBox.Show("Could not connect to controller!");
+      };
+
+      _controller.Disconnected += (sender, eventArgs) => {
+        btnConnectController.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
+          btnConnectController.Content = "Connect";
+          Controller.Text = "Not Connected";
+          Controller.Background = Brushes.Red;
+        }));
+        MessageBox.Show("The controller has been disconnected!");
+      };
+
       // Add handler to call closed function upon program exit
       Closed += new EventHandler(OnMainWindowClosed);
     }
@@ -99,11 +120,13 @@ namespace APOPHIS.GroundStation.GUI {
       if (DeltaT < 0) DeltaT = DeltaT + 1000;
 
       PreviousMillisecond = currentMillisecond;
-
+      
       //
       // Get the size of the incoming buffer.
       size = _COMPort.BytesToRead;
       DataStreamSize = size;
+
+      //TODO : FIX TO UTILIZE MAGIC PACKET ON ROLLING BUFFER
 
       //
       // Make sure we have a full packet, before updating.
@@ -131,7 +154,7 @@ namespace APOPHIS.GroundStation.GUI {
 
       //
       // Update the GUI.
-      UTC.Text = InputData.UTC.ToString();
+      txtUTC.Text = InputData.UTC.ToString();
       GPSLatitude.Text = InputData.Latitude.ToString();
       GPSLongitude.Text = InputData.Longitude.ToString();
       AltitudeASL.Text = InputData.Altitude.ToString();
@@ -423,43 +446,14 @@ namespace APOPHIS.GroundStation.GUI {
     private async void OnBtnConnectControllerClick(object sender, RoutedEventArgs e) {
       if (_controller.IsConnected) {
         await _controller.Disconnect();
-        btnConnectController.Content = "Connect";
       } else {
-        //
-        // Initialize a controller using XINPUT.
-        switch (cbController.Text) {
-          case "1": {
-              await _controller.Connect(UserIndex.One);
-              break;
-            }
-          case "2": {
-              await _controller.Connect(UserIndex.Two);
-              break;
-            }
-          case "3": {
-              await _controller.Connect(UserIndex.Three);
-              break;
-            }
-          case "4": {
-              await _controller.Connect(UserIndex.Four);
-              break;
-            }
-          default: {
-              await _controller.Connect(UserIndex.Any);
-              break;
-            }
-        }
-        if (_controller.IsConnected) {
-          //
-          // Change the button to say disconnect.
-          btnConnectController.Content = $"Controller {_controller.UserIndex}";
-        } else {
-          System.Windows.MessageBox.Show("Could not connect to controller!");
-        }
+        UserIndex controllerIndex;
+        if (!Enum.TryParse(cbController.Text, out controllerIndex)) controllerIndex = UserIndex.Any;
+        await _controller.Connect(controllerIndex);
       }
     }
 
-    private void OnControllerConnect(object sender, XboxController.ControllerEventArgs e) {
+    private void OnControllerEvent(object sender, XboxController.ControllerEventArgs e) {
 
     }
     
