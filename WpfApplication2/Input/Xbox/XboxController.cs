@@ -8,16 +8,12 @@ namespace APOPHIS.GroundStation.Input.Xbox {
   //
   // Definition for the xinput controller class.
   class XboxController : IDisposable {
-
-    public enum EventType { Connected, ConnectedFailed, Disconnected, Updated}
-
+    
     public class ControllerEventArgs : EventArgs {
       public UserIndex Index { get; set; }
-      public EventType Type { get; set; } 
 
-      public ControllerEventArgs(UserIndex index, EventType type) {
+      public ControllerEventArgs(UserIndex index) {
         Index = index;
-        Type = type;
       }
     }
 
@@ -86,7 +82,14 @@ namespace APOPHIS.GroundStation.Input.Xbox {
     public async Task<bool> Connect(UserIndex user = UserIndex.Any) {
       await Disconnect();
       disconnect = new CancellationTokenSource();
-      controller = new Controller(user);
+      if (user == UserIndex.Any) {
+        foreach (UserIndex i in Enum.GetValues(typeof(UserIndex))) {
+          controller = new Controller(i);
+          if (IsConnected) break;
+        }
+      } else {
+        controller = new Controller(user);
+      }
       if (IsConnected) {
         pollTask = Task.Factory.StartNew(() => {
           State internalState;
@@ -97,7 +100,7 @@ namespace APOPHIS.GroundStation.Input.Xbox {
               if (controllerState.PacketNumber != internalState.PacketNumber) {
                 // An update has occured
                 controllerState = internalState;
-                Updated?.Invoke(this, new ControllerEventArgs(UserIndex, EventType.Updated));
+                Updated?.Invoke(this, new ControllerEventArgs(UserIndex));
               }
               Thread.Sleep(pollDelay);
             }
@@ -106,12 +109,12 @@ namespace APOPHIS.GroundStation.Input.Xbox {
             pollTask = null;
             disconnect = null;
             controller = null;
-            Disconnected?.Invoke(this, new ControllerEventArgs(UserIndex, EventType.Disconnected));
+            Disconnected?.Invoke(this, new ControllerEventArgs(UserIndex));
           }
         }, disconnect.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-        Connected?.Invoke(this, new ControllerEventArgs(UserIndex, EventType.Connected));
+        Connected?.Invoke(this, new ControllerEventArgs(UserIndex));
       } else {
-        ConnectedFailed?.Invoke(this, new ControllerEventArgs(UserIndex, EventType.ConnectedFailed));
+        ConnectedFailed?.Invoke(this, new ControllerEventArgs(UserIndex));
       }
       return IsConnected;
     }
