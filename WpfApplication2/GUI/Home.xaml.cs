@@ -107,37 +107,72 @@ namespace APOPHIS.GroundStation.GUI {
     // Com port received data event handler. Called by the operating system when
     // there is data available in the rx buffer.
     private void COMPortDataReceived(object sender, SerialDataReceivedEventArgs e) {
-      int size;
-      byte[] rawData;
-      int currentMillisecond;
+            int size;
+            byte[] rawData = new byte[84];
+            byte[] Magic = new byte[4] { 0, 0, 0, 0};
+            int MagicCount = 0;
+            int currentMillisecond;
+            int Index = 0;
+            bool bValidData = false;
+            byte rxChar;
 
-      //
-      // Packet received! Get the current time.
-      Millisecond = DateTime.Now;
-      currentMillisecond = Millisecond.Millisecond;
-      DeltaT = currentMillisecond - PreviousMillisecond;
-      if (DeltaT < 0) DeltaT = DeltaT + 1000;
+        //TODO : FIX TO UTILIZE MAGIC PACKET ON ROLLING BUFFER
+        rawData = new byte[84];
 
-      PreviousMillisecond = currentMillisecond;
-      
-      //
-      // Get the size of the incoming buffer.
-      size = _COMPort.BytesToRead;
-      DataStreamSize = size;
+        //
+        // Search for the magic packet.
+        while (_COMPort.BytesToRead > 0)
+        {
+                rxChar = Convert.ToByte(_COMPort.ReadByte());
 
-      //TODO : FIX TO UTILIZE MAGIC PACKET ON ROLLING BUFFER
+                if (Index >= 84) Index = 0;
+                if (bValidData)
+                {
+                    //
+                    // Read the data from the incoming buffer.
+                    rawData[Index++] = rxChar;
 
-      //
-      // Make sure we have a full packet, before updating.
-      if (size >= 84) {
-                rawData = new byte[84];
-                //
-                // Read the data from the incoming buffer.
-                _COMPort.Read(rawData, 0, 84);
+                    if ((rawData[3] == Convert.ToByte('D')) || (rawData[3] == Convert.ToByte('F')) && (Index >= 84))
+                    {
 
-          InputData.FromBytes(rawData);
-          Dispatcher?.Invoke(() => UpdateGUI());
-      }
+                        //
+                        // Packet received! Get the current time.
+                        Millisecond = DateTime.Now;
+                        currentMillisecond = Millisecond.Millisecond;
+                        DeltaT = currentMillisecond - PreviousMillisecond;
+                        if (DeltaT < 0) DeltaT = DeltaT + 1000;
+
+                        PreviousMillisecond = currentMillisecond;
+
+                        DataStreamSize = 84;
+
+                        InputData.FromBytes(rawData);
+                        Dispatcher?.Invoke(() => UpdateGUI());
+
+                        break;
+                    }
+                }
+                else
+                {
+                    Magic[Index] = rxChar;
+                    Index = (Index + 1) % 4;
+                    if (MagicCount >= 3)
+                    {
+                        if (Magic[Index % 4] == 0xFF && Magic[(Index + 1) % 4] == 0xFF && Magic[(Index + 2) % 4] == 0xFF &&
+                            (Magic[(Index + 3) % 4] == Convert.ToByte('D') || Magic[(Index + 3) % 4] == Convert.ToByte('F')))
+                        {
+                            rawData[3] = Magic[(Index + 3) % 4];
+                            Index = 4;
+                            bValidData = true;
+                            MagicCount = 0;
+                        }
+                    }
+                    else
+                    {
+                        MagicCount++;
+                    }
+                }
+        }
     }
 
     //
