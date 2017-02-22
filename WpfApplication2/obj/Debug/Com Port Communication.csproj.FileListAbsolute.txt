@@ -1,3 +1,25 @@
+<<<<<<< HEAD
+P:\code\apophis\gs\WpfApplication2\bin\Debug\APOPHIS-GS.exe.config
+P:\code\apophis\gs\WpfApplication2\obj\Debug\APOPHIS-GS_MarkupCompile.cache
+P:\code\apophis\gs\WpfApplication2\obj\Debug\APOPHIS-GS_MarkupCompile.lref
+P:\code\apophis\gs\WpfApplication2\bin\Debug\APOPHIS-GS.exe
+P:\code\apophis\gs\WpfApplication2\bin\Debug\APOPHIS-GS.pdb
+P:\code\apophis\gs\WpfApplication2\bin\Debug\APOPHIS-GS.exe.CodeAnalysisLog.xml
+P:\code\apophis\gs\WpfApplication2\bin\Debug\APOPHIS-GS.exe.lastcodeanalysissucceeded
+P:\code\apophis\gs\WpfApplication2\bin\Debug\SharpDX.dll
+P:\code\apophis\gs\WpfApplication2\bin\Debug\SharpDX.XInput.dll
+P:\code\apophis\gs\WpfApplication2\bin\Debug\SharpDX.xml
+P:\code\apophis\gs\WpfApplication2\bin\Debug\SharpDX.XInput.xml
+P:\code\apophis\gs\WpfApplication2\obj\Debug\APOPHIS-GS.g.resources
+P:\code\apophis\gs\WpfApplication2\obj\Debug\APOPHIS.GroundStation.Properties.Resources.resources
+P:\code\apophis\gs\WpfApplication2\obj\Debug\Com Port Communication.csproj.GenerateResource.Cache
+P:\code\apophis\gs\WpfApplication2\obj\Debug\APOPHIS-GS.exe
+P:\code\apophis\gs\WpfApplication2\obj\Debug\APOPHIS-GS.pdb
+P:\code\apophis\gs\WpfApplication2\obj\Debug\Com Port Communication.csprojResolveAssemblyReference.cache
+P:\code\apophis\gs\WpfApplication2\obj\Debug\GUI\Home.g.cs
+P:\code\apophis\gs\WpfApplication2\obj\Debug\GUI\App.g.cs
+P:\code\apophis\gs\WpfApplication2\obj\Debug\GUI\Home.baml
+=======
 C:\Users\b\Documents\Visual Studio 2015\Projects\WpfApplication2\WpfApplication2\bin\Debug\WpfApplication2.exe.config
 C:\Users\b\Documents\Visual Studio 2015\Projects\WpfApplication2\WpfApplication2\bin\Debug\WpfApplication2.exe
 C:\Users\b\Documents\Visual Studio 2015\Projects\WpfApplication2\WpfApplication2\bin\Debug\WpfApplication2.pdb
@@ -43,3 +65,4 @@ C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Stati
 C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.g.resources
 C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\APOPHISGS.Properties.Resources.resources
 C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\Com Port Communication.csproj.GenerateResource.Cache
+>>>>>>> refs/remotes/origin/master

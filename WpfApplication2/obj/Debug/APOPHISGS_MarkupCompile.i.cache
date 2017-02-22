@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\obj\Debug\
-APOPHISGS
+P:\code\apophis\gs\WpfApplication2\obj\Debug\
+APOPHIS.GroundStation
 none
 false
-DEBUG;TRACE
-C:\Users\b\Documents\Visual Studio 2015\Projects\Ground Station GUI\Ground-Station-GUI\WpfApplication2\App.xaml
+CODE_ANALYSIS;DEBUG;TRACE
+P:\code\apophis\gs\WpfApplication2\App.xaml
 1-1772647047
 
-9-685745505
-681376840954
+15-1377155311
+68-1611839478
 Home.xaml;
 
 False
