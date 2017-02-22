@@ -109,7 +109,6 @@ namespace APOPHIS.GroundStation.GUI {
     private void COMPortDataReceived(object sender, SerialDataReceivedEventArgs e) {
       int size;
       byte[] rawData;
-      rawData = new byte[100];
       int currentMillisecond;
 
       //
@@ -130,17 +129,14 @@ namespace APOPHIS.GroundStation.GUI {
 
       //
       // Make sure we have a full packet, before updating.
-      if (size > 77) {
-        if (size > 100) {
-          _COMPort.DiscardInBuffer();
-        } else {
-          //
-          // Read the data from the incoming buffer.
-          _COMPort.Read(rawData, 0, size);
+      if (size >= 84) {
+                rawData = new byte[84];
+                //
+                // Read the data from the incoming buffer.
+                _COMPort.Read(rawData, 0, 84);
 
           InputData.FromBytes(rawData);
           Dispatcher?.Invoke(() => UpdateGUI());
-        }
       }
     }
 

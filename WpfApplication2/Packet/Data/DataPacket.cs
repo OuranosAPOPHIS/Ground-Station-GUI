@@ -6,7 +6,7 @@ namespace APOPHIS.GroundStation.Packet.Data {
   class DataPacket : IPacket {
     //
     // Define the struct for input data from the platform.
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 21)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 84)]
     private struct Packet {
       public byte magic1;
       public byte magic2;
@@ -30,22 +30,22 @@ namespace APOPHIS.GroundStation.Packet.Data {
       public float pitch;
       public float yaw;
 
-      public bool gndmtr1;
-      public bool gndmtr2;
-      public bool amtr1;
-      public bool amtr2;
+      public byte gndmtr1;
+      public byte gndmtr2;
+      public byte amtr1;
+      public byte amtr2;
 
-      public bool amtr3;
-      public bool amtr4;
-      public bool uS1;
-      public bool uS2;
+      public byte amtr3;
+      public byte amtr4;
+      public byte uS1;
+      public byte uS2;
 
-      public bool uS3;
-      public bool uS4;
-      public bool uS5;
-      public bool uS6;
+      public byte uS3;
+      public byte uS4;
+      public byte uS5;
+      public byte uS6;
 
-      public bool payBay;
+      public byte payBay;
       public byte padEnd1;
       public byte padEnd2;
       public byte padEnd3;
@@ -93,31 +93,31 @@ namespace APOPHIS.GroundStation.Packet.Data {
 
     public float Yaw { get { return _data.yaw; } }
 
-    public bool GroundMeter1 { get { return _data.gndmtr1; } }
+    public bool GroundMeter1 { get { return Convert.ToBoolean(_data.gndmtr1); } }
 
-    public bool GroundMeter2 { get { return _data.gndmtr2; } }
+    public bool GroundMeter2 { get { return Convert.ToBoolean(_data.gndmtr2); } }
 
-    public bool AirMotor1 { get { return _data.amtr1; } }
+    public bool AirMotor1 { get { return Convert.ToBoolean(_data.amtr1); } }
 
-    public bool AirMotor2 { get { return _data.amtr2; } }
+    public bool AirMotor2 { get { return Convert.ToBoolean(_data.amtr2); } }
 
-    public bool AirMotor3 { get { return _data.amtr3; } }
+    public bool AirMotor3 { get { return Convert.ToBoolean(_data.amtr3); } }
 
-    public bool AirMotor4 { get { return _data.amtr4; } }
+    public bool AirMotor4 { get { return Convert.ToBoolean(_data.amtr4); } }
 
-    public bool uS1 { get { return _data.uS1; } }
+    public bool uS1 { get { return Convert.ToBoolean(_data.uS1); } }
 
-    public bool uS2 { get { return _data.uS2; } }
+    public bool uS2 { get { return Convert.ToBoolean(_data.uS2); } }
 
-    public bool uS3 { get { return _data.uS3; } }
+    public bool uS3 { get { return Convert.ToBoolean(_data.uS3); } }
 
-    public bool uS4 { get { return _data.uS4; } }
+    public bool uS4 { get { return Convert.ToBoolean(_data.uS4); } }
 
-    public bool uS5 { get { return _data.uS5; } }
+    public bool uS5 { get { return Convert.ToBoolean(_data.uS5); } }
 
-    public bool uS6 { get { return _data.uS6; } }
+    public bool uS6 { get { return Convert.ToBoolean(_data.uS6); } }
 
-    public bool PayloadBay { get { return _data.payBay; } }
+    public bool PayloadBay { get { return Convert.ToBoolean(_data.payBay); } }
 
     public DataPacket(char defaultMovement = 'D') {
       _data.magic1 = 0;
@@ -140,25 +140,25 @@ namespace APOPHIS.GroundStation.Packet.Data {
       _data.roll = 0;
       _data.pitch = 0;
       _data.yaw = 0;
-      _data.gndmtr1 = false;
-      _data.gndmtr2 = false;
-      _data.amtr1 = false;
-      _data.amtr2 = false;
-      _data.amtr3 = false;
-      _data.amtr4 = false;
-      _data.uS1 = false;
-      _data.uS2 = false;
-      _data.uS3 = false;
-      _data.uS4 = false;
-      _data.uS5 = false;
-      _data.uS6 = false;
-      _data.payBay = false;
+      _data.gndmtr1 = 0x0;
+      _data.gndmtr2 = 0x0;
+      _data.amtr1 = 0x0;
+      _data.amtr2 = 0x0;
+      _data.amtr3 = 0x0;
+      _data.amtr4 = 0x0;
+      _data.uS1 = 0x0;
+      _data.uS2 = 0x0;
+      _data.uS3 = 0x0;
+      _data.uS4 = 0x0;
+      _data.uS5 = 0x0;
+      _data.uS6 = 0x0;
+      _data.payBay = 0x0;
     }
 
     public byte[] GetBytes() => _data.GetBytes();
 
     public void FromBytes(byte[] packetArr) {
-      if (packetArr.Length != Marshal.SizeOf(_data)) throw new ArgumentException(string.Format("Array is not a valid size ({0}).", Marshal.SizeOf(_data)), nameof(packetArr));
+      if (packetArr.Length != Marshal.SizeOf(_data)) throw new ArgumentException($"Array is not a valid size ({nameof(packetArr)} ({packetArr.Length}) != DataPacket Struct ({Marshal.SizeOf(_data)})).", nameof(packetArr));
       _data = packetArr.FromBytes<Packet>();
     }
   }
