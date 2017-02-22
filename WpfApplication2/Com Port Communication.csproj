@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>APOPHIS.GroundStation.App</StartupObject>
+    <StartupObject>APOPHIS.GroundStation.GUI.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
@@ -64,6 +64,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -80,25 +81,26 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="GUI\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Packet\ControlOutDataPacket.cs" />
-    <Compile Include="Packet\DataPacket.cs" />
-    <Compile Include="Packet\IPacket.cs" />
-    <Compile Include="Packet\TargetOutDataPacket.cs" />
+    <Compile Include="Helpers\SerialPortService.cs" />
+    <Compile Include="Packet\Data\ControlOutDataPacket.cs" />
+    <Compile Include="Packet\Data\DataPacket.cs" />
+    <Compile Include="Packet\Data\IPacket.cs" />
+    <Compile Include="Packet\Data\TargetOutDataPacket.cs" />
     <Compile Include="Helpers\StructHelpers.cs" />
-    <Compile Include="XInputController.cs" />
-    <Page Include="Home.xaml">
+    <Compile Include="Input\Xbox\XboxController.cs" />
+    <Page Include="GUI\Home.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="GUI\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Home.xaml.cs">
+    <Compile Include="GUI\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
