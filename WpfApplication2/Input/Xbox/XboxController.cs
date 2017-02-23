@@ -48,11 +48,11 @@ namespace APOPHIS.GroundStation.Input.Xbox {
     public Gamepad Gamepad { get { return controllerState.Gamepad; } }
     public int PacketNumber { get { return controllerState.PacketNumber; } }
 
-    public float LeftDeadZone { get; set; } = Gamepad.LeftThumbDeadZone / short.MaxValue;
-    public float RightDeadZone { get; set; } = Gamepad.LeftThumbDeadZone / short.MaxValue;
+    public float LeftDeadZone { get; set; } = Convert.ToSingle(Gamepad.LeftThumbDeadZone) / short.MaxValue;
+    public float RightDeadZone { get; set; } = Convert.ToSingle(Gamepad.RightThumbDeadZone) / short.MaxValue;
     public byte TriggerThreshold { get; set; } = Gamepad.TriggerThreshold / byte.MaxValue;
-    public Vector LeftThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.LeftThumbX, -Gamepad.LeftThumbY, LeftDeadZone) : new Vector(0, 0); } }
-    public Vector RightThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.RightThumbX, -Gamepad.RightThumbY, RightDeadZone) : new Vector(0, 0); } }
+    public Vector LeftThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.LeftThumbX, Gamepad.LeftThumbY, LeftDeadZone) : new Vector(0, 0); } }
+    public Vector RightThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.RightThumbX, Gamepad.RightThumbY, RightDeadZone) : new Vector(0, 0); } }
     public byte LeftTrigger { get { return ((Gamepad.LeftTrigger) >= TriggerThreshold && IsConnected) ? Gamepad.LeftTrigger : ((byte)0); } }
     public byte RightTrigger { get { return ((Gamepad.RightTrigger) >= TriggerThreshold && IsConnected) ? Gamepad.RightTrigger : ((byte)0); } }
 
@@ -125,17 +125,19 @@ namespace APOPHIS.GroundStation.Input.Xbox {
     }
 
     private Vector CalculateDeadzone(int X, int Y, double deadzone) {
-      if (X == short.MinValue) X = short.MinValue + 1;
-      if (Y == short.MinValue) Y = short.MinValue + 1;
+         if (X == short.MinValue) X = short.MinValue + 1;
+        if (Y == short.MinValue) Y = short.MinValue + 1;
 
-      var input = new Vector(X, Y);
-      input.Normalize();
+          var input = new Vector(X, Y);
+            input.Normalize();
 
-      if (input.Length < deadzone) {
-        input = new Vector(0, 0);
-      } else {
-        input = input * ((input.Length - deadzone) / (1 - deadzone));
+            if (Math.Abs(input.X) < deadzone) {
+                input.X = 0;
+        }
+      if (Math.Abs(input.Y) < deadzone) {
+        input.Y = 0;
       }
+
       return input;
     }
 

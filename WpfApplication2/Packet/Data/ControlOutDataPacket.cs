@@ -13,11 +13,13 @@ namespace APOPHIS.GroundStation.Packet.Data {
       public byte Magic2;
       public byte Magic3;
       public byte Type;          // Target or Control command? T or C?
+
       public float Throttle;   // Desired throttle level.
       public float Throttle2; // Desired throttle of left wheel in ground mode.
       public float Roll;         // Desired roll angle.
       public float Pitch;        // Desired pitch angle.
       public float Yaw;          // Desired yaw angle.
+
       public byte FlyOrDrive;     // vehicle flying or driving?
       public byte FDConfirm;      // fly or drive confirmation;
       public bool PayloadRelease;    // Release the payload command.

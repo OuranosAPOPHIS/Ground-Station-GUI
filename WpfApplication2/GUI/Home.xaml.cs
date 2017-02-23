@@ -107,7 +107,6 @@ namespace APOPHIS.GroundStation.GUI {
     // Com port received data event handler. Called by the operating system when
     // there is data available in the rx buffer.
     private void COMPortDataReceived(object sender, SerialDataReceivedEventArgs e) {
-            int size;
             byte[] rawData = new byte[84];
             byte[] Magic = new byte[4] { 0, 0, 0, 0};
             int MagicCount = 0;
@@ -118,6 +117,8 @@ namespace APOPHIS.GroundStation.GUI {
 
         //TODO : FIX TO UTILIZE MAGIC PACKET ON ROLLING BUFFER
         rawData = new byte[84];
+
+        DataStreamSize = _COMPort.BytesToRead;
 
         //
         // Search for the magic packet.
@@ -132,7 +133,7 @@ namespace APOPHIS.GroundStation.GUI {
                     // Read the data from the incoming buffer.
                     rawData[Index++] = rxChar;
 
-                    if ((rawData[3] == Convert.ToByte('D')) || (rawData[3] == Convert.ToByte('F')) && (Index >= 84))
+                    if (((rawData[3] == Convert.ToByte('D')) || (rawData[3] == Convert.ToByte('F'))) && (Index >= 84))
                     {
 
                         //
@@ -143,8 +144,6 @@ namespace APOPHIS.GroundStation.GUI {
                         if (DeltaT < 0) DeltaT = DeltaT + 1000;
 
                         PreviousMillisecond = currentMillisecond;
-
-                        DataStreamSize = 84;
 
                         InputData.FromBytes(rawData);
                         Dispatcher?.Invoke(() => UpdateGUI());
@@ -339,7 +338,8 @@ namespace APOPHIS.GroundStation.GUI {
       }
       //
       // Trigger a data packet send over the com port.
-      if (RadioConnected && (_COMPort.BytesToRead == 0)) SendPacket();
+      if (RadioConnected) //&& (_COMPort.BytesToRead == 0)) 
+                SendPacket();
     }
 
     //
