@@ -4,15 +4,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace APOPHIS.GroundStation.Input.Xbox {
+namespace APOPHIS.GroundStation.Input.Xbox
+{
   //
   // Definition for the xinput controller class.
-  class XboxController : IDisposable {
-    
-    public class ControllerEventArgs : EventArgs {
+  class XboxController : IDisposable
+  {
+
+    public class ControllerEventArgs : EventArgs
+    {
       public UserIndex Index { get; set; }
 
-      public ControllerEventArgs(UserIndex index) {
+      public ControllerEventArgs(UserIndex index)
+      {
         Index = index;
       }
     }
@@ -30,14 +34,20 @@ namespace APOPHIS.GroundStation.Input.Xbox {
     private CancellationTokenSource disconnect;
     private Task pollTask;
 
-    public int PollRate {
-      get {
+    public int PollRate
+    {
+      get
+      {
         return 1000 / pollDelay;
       }
-      set {
-        if (1 <= value && value <= 1000) {
+      set
+      {
+        if (1 <= value && value <= 1000)
+        {
           pollDelay = 1000 / value;
-        } else {
+        }
+        else
+        {
           throw new ArgumentOutOfRangeException(nameof(value), "Poll rate cannot be less than 1 or greater than 1000.");
         }
       }
@@ -48,13 +58,13 @@ namespace APOPHIS.GroundStation.Input.Xbox {
     public Gamepad Gamepad { get { return controllerState.Gamepad; } }
     public int PacketNumber { get { return controllerState.PacketNumber; } }
 
-    public float LeftDeadZone { get; set; } = Convert.ToSingle(Gamepad.LeftThumbDeadZone) / short.MaxValue;
-    public float RightDeadZone { get; set; } = Convert.ToSingle(Gamepad.RightThumbDeadZone) / short.MaxValue;
-    public byte TriggerThreshold { get; set; } = Gamepad.TriggerThreshold / byte.MaxValue;
+    public double LeftDeadZone { get; set; } = Convert.ToDouble(Gamepad.LeftThumbDeadZone) / short.MaxValue;
+    public double RightDeadZone { get; set; } = Convert.ToDouble(Gamepad.RightThumbDeadZone) / short.MaxValue;
+    public double TriggerThreshold { get; set; } = Convert.ToDouble(Gamepad.TriggerThreshold) / byte.MaxValue;
     public Vector LeftThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.LeftThumbX, Gamepad.LeftThumbY, LeftDeadZone) : new Vector(0, 0); } }
     public Vector RightThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.RightThumbX, Gamepad.RightThumbY, RightDeadZone) : new Vector(0, 0); } }
-    public byte LeftTrigger { get { return ((Gamepad.LeftTrigger) >= TriggerThreshold && IsConnected) ? Gamepad.LeftTrigger : ((byte)0); } }
-    public byte RightTrigger { get { return ((Gamepad.RightTrigger) >= TriggerThreshold && IsConnected) ? Gamepad.RightTrigger : ((byte)0); } }
+    public double LeftTrigger { get { return (IsConnected && (Convert.ToDouble(Gamepad.LeftTrigger) / byte.MaxValue) >= TriggerThreshold) ? (Convert.ToDouble(Gamepad.LeftTrigger) / byte.MaxValue) * 100 : ((byte)0); } }
+    public double RightTrigger { get { return (IsConnected && (Convert.ToDouble(Gamepad.RightTrigger) / byte.MaxValue) >= TriggerThreshold) ? (Convert.ToDouble(Gamepad.RightTrigger) / byte.MaxValue) * 100 : ((byte)0); } }
 
     public GamepadButtonFlags ButtonState { get { return Gamepad.Buttons; } }
 
@@ -75,84 +85,99 @@ namespace APOPHIS.GroundStation.Input.Xbox {
 
     //
     // XboxController Constructor.
-    public XboxController(int pollRate = 100) {
+    public XboxController(int pollRate = 100)
+    {
       PollRate = pollRate;
     }
 
-    public async Task<bool> Connect(UserIndex user = UserIndex.Any) {
+    public async Task<bool> Connect(UserIndex user = UserIndex.Any)
+    {
       await Disconnect();
       disconnect = new CancellationTokenSource();
-      if (user == UserIndex.Any) {
-        foreach (UserIndex i in Enum.GetValues(typeof(UserIndex))) {
+      if (user == UserIndex.Any)
+      {
+        foreach (UserIndex i in Enum.GetValues(typeof(UserIndex)))
+        {
           controller = new Controller(i);
           if (IsConnected) break;
         }
-      } else {
+      }
+      else
+      {
         controller = new Controller(user);
       }
-      if (IsConnected) {
-        pollTask = Task.Factory.StartNew(() => {
+      if (IsConnected)
+      {
+        pollTask = Task.Factory.StartNew(() =>
+        {
           State internalState;
-          try {
-            while (IsConnected && !disconnect.Token.IsCancellationRequested) {
+          try
+          {
+            while (IsConnected && !disconnect.Token.IsCancellationRequested)
+            {
               //poll HW
               internalState = controller.GetState();
-              if (controllerState.PacketNumber != internalState.PacketNumber) {
+              if (controllerState.PacketNumber != internalState.PacketNumber)
+              {
                 // An update has occured
                 controllerState = internalState;
                 Updated?.Invoke(this, new ControllerEventArgs(UserIndex));
               }
               Thread.Sleep(pollDelay);
             }
-          } catch (Exception) {
-          } finally {
-            pollTask = null;
-            disconnect = null;
-            controller = null;
+          }
+          catch (Exception)
+          {
+          }
+          finally
+          {
             Disconnected?.Invoke(this, new ControllerEventArgs(UserIndex));
           }
         }, disconnect.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         Connected?.Invoke(this, new ControllerEventArgs(UserIndex));
-      } else {
+      }
+      else
+      {
         ConnectedFailed?.Invoke(this, new ControllerEventArgs(UserIndex));
       }
       return IsConnected;
     }
 
-    public async Task Disconnect() {
+    public async Task Disconnect()
+    {
       disconnect?.Cancel();
       if (pollTask?.Status == TaskStatus.Running) await pollTask;
     }
 
-    private Vector CalculateDeadzone(int X, int Y, double deadzone) {
-         if (X == short.MinValue) X = short.MinValue + 1;
-        if (Y == short.MinValue) Y = short.MinValue + 1;
-
-          var input = new Vector(X, Y);
-            input.Normalize();
-
-            if (Math.Abs(input.X) < deadzone) {
-                input.X = 0;
-        }
-      if (Math.Abs(input.Y) < deadzone) {
+    private Vector CalculateDeadzone(short X, short Y, double deadzone)
+    {
+      if (X == short.MinValue) X = short.MinValue + 1;
+      if (Y == short.MinValue) Y = short.MinValue + 1;
+      var input = new Vector(((double)X) / short.MaxValue, ((double)Y) / short.MaxValue);
+      if (input.Length < deadzone)
+      {
+        input.X = 0;
         input.Y = 0;
       }
-
+      else
+      {
+        var inputNormalized = new Vector(input.X, input.Y);
+        inputNormalized.Normalize();
+        input = (inputNormalized * ((input.Length - deadzone) / (1 - deadzone))) * 100;
+      }
       return input;
     }
 
     #region IDisposable Support
     private bool disposedValue = false; // To detect redundant calls
 
-    protected virtual void Dispose(bool disposing) {
-      if (!disposedValue) {
-        if (disposing) {
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
           disconnect?.Cancel();
-          if (pollTask != null) pollTask.RunSynchronously();
-          disconnect?.Dispose();
-          pollTask = null;
-          disconnect = null;
-          controller = null;
         }
 
         disposedValue = true;
@@ -160,11 +185,9 @@ namespace APOPHIS.GroundStation.Input.Xbox {
     }
 
     // This code added to correctly implement the disposable pattern.
-    public void Dispose() {
-      // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+    public void Dispose()
+    {
       Dispose(true);
-      // TODO: uncomment the following line if the finalizer is overridden above.
-      // GC.SuppressFinalize(this);
     }
     #endregion
   }

@@ -236,11 +236,11 @@ namespace APOPHIS.GroundStation.GUI {
             break;
           }
         case 'M': {
-            byte[] datam = ControlOutData.GetBytes();
+            byte[] data = ControlOutData.GetBytes();
 
             //
             // Write the data.
-            _COMPort.Write(datam, 0, datam.Length);
+            _COMPort.Write(data, 0, data.Length);
 
             break;
           }
@@ -301,9 +301,9 @@ namespace APOPHIS.GroundStation.GUI {
                   // Use the left and right triggers to calaculate yaw "rate". 
                   // Value ranges from 0 to 255 for triggers. 
                   if (_controller.RightTrigger > 0) {
-                    ControlOutData.Yaw = _controller.RightTrigger;
+                    ControlOutData.Yaw = Convert.ToSingle(_controller.RightTrigger);
                   } else if (_controller.LeftTrigger > 0) {
-                    ControlOutData.Yaw = _controller.LeftTrigger * -1;
+                    ControlOutData.Yaw = Convert.ToSingle(_controller.LeftTrigger * -1);
                   } else {
                     ControlOutData.Yaw = 0.0F;
                   }
@@ -330,8 +330,8 @@ namespace APOPHIS.GroundStation.GUI {
             //
             // Check if payload has been deployed.
             if (PayloadRelease) {
-              ControlOutData.PayloadRelease = true;
-              ControlOutData.PRConfirm = true;
+              ControlOutData.PayloadRelease = Convert.ToByte(true);
+              ControlOutData.PRConfirm = Convert.ToByte(true);
             }
           }
           break;
