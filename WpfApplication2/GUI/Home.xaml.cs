@@ -268,26 +268,25 @@ namespace APOPHIS.GroundStation.GUI {
             }
             break;
           }
-        case 'M': { // Manual mode, control the platform with the controller.    
-                    //
-                    // Set the type of command.
-            ControlOutData.Type = 'C';
-
+        case 'M': { 
+            // Manual mode, control the platform with the controller.    
             //
-            // Check the throttle level. Ignore any x value on the right stick.
-            // This will be a % from 0.0 to 1.0.
-            ControlOutData.Throttle = (float)_controller.RightThumb.Y;
+            // Set the type of command.
+            ControlOutData.Type = 'C';
 
             //
             // Check if we are driving or flying.
             switch (InputData.Movement) {
               case 'D': {
-                  //
-                  // Travelling on the ground. Ignore pitch and roll.
-                  ControlOutData.Throttle2 = (float)_controller.LeftThumb.Y;
-                  ControlOutData.Pitch = 0.0F;
-                  ControlOutData.Roll = 0.0F;
-                  ControlOutData.Yaw = 0.0F;
+                    //
+                    // Travelling on the ground. Ignore pitch and roll.
+                    // Check the throttle level. Ignore any x value on the right stick.
+                    // This will be a % from 0.0 to 1.0.
+                    ControlOutData.Throttle = (float)_controller.RightThumb.Y;
+                    ControlOutData.Throttle2 = (float)_controller.LeftThumb.Y;
+                    ControlOutData.Pitch = 0.0F;
+                    ControlOutData.Roll = 0.0F;
+                    ControlOutData.Yaw = 0.0F;
                   break;
                 }
               case 'F': {
@@ -298,16 +297,25 @@ namespace APOPHIS.GroundStation.GUI {
                   ControlOutData.Roll = (float)_controller.LeftThumb.X;
 
                   //
-                  // Use the left and right triggers to calaculate yaw "rate". 
+                  // Use the left and right triggers to calaculate throttle. 
                   // Value ranges from 0 to 255 for triggers. 
                   if (_controller.RightTrigger > 0) {
-                    ControlOutData.Yaw = Convert.ToSingle(_controller.RightTrigger);
+                    ControlOutData.Throttle = Convert.ToSingle(_controller.RightTrigger);
                   } else if (_controller.LeftTrigger > 0) {
-                    ControlOutData.Yaw = Convert.ToSingle(_controller.LeftTrigger * -1);
+                    ControlOutData.Throttle = Convert.ToSingle(_controller.LeftTrigger * -1);
                   } else {
-                    ControlOutData.Yaw = 0.0F;
+                    ControlOutData.Throttle = 0.0F;
                   }
-                  break;
+
+                    //
+                    // Get the yaw direction using the controller bumpers. 
+                    if (_controller.IsRightShoulder)
+                        ControlOutData.Yaw = 1;
+                    else if (_controller.IsLeftShoulder)
+                        ControlOutData.Yaw = -1;
+                    else
+                        ControlOutData.Yaw = 0;
+                    break;
                 }
             }
 
