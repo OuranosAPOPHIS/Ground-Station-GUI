@@ -346,7 +346,7 @@ namespace APOPHIS.GroundStation.GUI {
       }
       //
       // Trigger a data packet send over the com port.
-      if (RadioConnected) //&& (_COMPort.BytesToRead == 0)) 
+      if (RadioConnected && _controller.IsConnected) 
                 SendPacket();
     }
 
