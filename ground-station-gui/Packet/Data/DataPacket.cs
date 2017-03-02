@@ -1,17 +1,15 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using APOPHIS.GroundStation.Helpers;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
+﻿using APOPHIS.GroundStation.Helpers;
+using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 
-namespace APOPHIS.GroundStation.Packet.Data {
+namespace APOPHIS.GroundStation.Packet.Data
+{
   class DataPacket : IPacket {
     //
     // Define the struct for input data from the platform.
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 84)]
-    private struct Packet {
+    public struct Packet {
       public byte magic1;
       public byte magic2;
       public byte magic3;
@@ -57,11 +55,21 @@ namespace APOPHIS.GroundStation.Packet.Data {
 
     private Packet _data;
 
-    public byte[] Magic {
+    public byte[] Bytes {
       get {
-        return new byte[] { _data.magic1, _data.magic2, _data.magic3 };
+        return _data.GetBytes();
+      }
+      set {
+        if (value.Length != Marshal.SizeOf(_data)) throw new ArgumentException($"Array is not a valid size ({nameof(value)} ({value.Length}) != DataPacket Struct ({Marshal.SizeOf(_data)})).", nameof(value));
+        _data = value.FromBytes<Packet>();
       }
     }
+
+    public string CSVData { get { return _data.ToCSV<Packet>(fields: typeof(Packet).GetFields().Where(f => !f.Name.Contains("magic") && !f.Name.Contains("pad")).ToArray()); } }
+
+    public string CSVHeader { get { return CSVHelpers.ToCSVHeader<Packet>(fields: typeof(Packet).GetFields().Where(f => !f.Name.Contains("magic") && !f.Name.Contains("pad")).ToArray()); } }
+
+    public byte[] Magic { get { return new byte[] { _data.magic1, _data.magic2, _data.magic3 }; } }
 
     public char Movement { get { return Convert.ToChar(_data.movement); } }
 
@@ -157,47 +165,6 @@ namespace APOPHIS.GroundStation.Packet.Data {
       _data.uS5 = 0x0;
       _data.uS6 = 0x0;
       _data.payBay = 0x0;
-    }
-
-    public byte[] GetBytes() => _data.GetBytes();
-
-    public void FromBytes(byte[] packetArr) {
-      if (packetArr.Length != Marshal.SizeOf(_data)) throw new ArgumentException($"Array is not a valid size ({nameof(packetArr)} ({packetArr.Length}) != DataPacket Struct ({Marshal.SizeOf(_data)})).", nameof(packetArr));
-      _data = packetArr.FromBytes<Packet>();
-    }
-
-    public static string ToCsv<T>(string separator, IEnumerable<T> objectlist)
-    {
-      Type t = typeof(T);
-      FieldInfo[] fields = t.GetFields();
-
-      string header = String.Join(separator, fields.Select(f => f.Name).ToArray());
-
-      StringBuilder csvdata = new StringBuilder();
-      csvdata.AppendLine(header);
-
-      foreach (var o in objectlist)
-        csvdata.AppendLine(ToCsvFields(separator, fields, o));
-
-      return csvdata.ToString();
-    }
-
-    public static string ToCsvFields(string separator, FieldInfo[] fields, object o)
-    {
-      StringBuilder linie = new StringBuilder();
-
-      foreach (var f in fields)
-      {
-        if (linie.Length > 0)
-          linie.Append(separator);
-
-        var x = f.GetValue(o);
-
-        if (x != null)
-          linie.Append(x.ToString());
-      }
-
-      return linie.ToString();
     }
   }
 }

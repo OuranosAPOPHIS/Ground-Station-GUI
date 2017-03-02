@@ -85,7 +85,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helpers\LogWriter.cs" />
+    <Compile Include="Helpers\CSVHelpers.cs" />
+    <Compile Include="Packet\PacketLogger.cs" />
     <Compile Include="Helpers\SerialPortService.cs" />
     <Compile Include="Packet\Data\ControlOutDataPacket.cs" />
     <Compile Include="Packet\Data\DataPacket.cs" />
