@@ -20,6 +20,11 @@ namespace APOPHIS.GroundStation.GUI {
     //
     // Set up a controller.
     XboxController _controller = new XboxController();
+
+    //
+    // Set up a log writer.
+    LogWriter _logWriter = new LogWriter();
+    string fileName = "GSDataLog";
     
     //
     // Setup a system clock to count the time between data packets.
@@ -50,6 +55,10 @@ namespace APOPHIS.GroundStation.GUI {
     public float Latitude { get; set; }
 
     public float Longitude { get; set; }
+
+    //
+    // Indicator for when to log data.
+    bool LogData = false;
 
     //
     // Set up a timer for the controller.
@@ -146,9 +155,14 @@ namespace APOPHIS.GroundStation.GUI {
                         PreviousMillisecond = currentMillisecond;
 
                         InputData.FromBytes(rawData);
+
                         Dispatcher?.Invoke(() => UpdateGUI());
 
-                        break;
+                        //
+                        // Log all the received data to a log file.
+                        if (LogData)
+                          _logWriter.LogWrite(InputData.ToCsv(",", DataPacket));
+            break;
                     }
                 }
                 else
@@ -510,6 +524,20 @@ namespace APOPHIS.GroundStation.GUI {
       }
     }
 
+    private void LogFileBtn_Click(object sender, RoutedEventArgs e)
+    {
+      if (!LogData)
+      {
+        //
+        // Create the log file.
+        _logWriter.LogCreator(fileName);
+
+        LogData = true;
+
+        this.LogFileBtn.Content = "Logging Data";
+      }
+    }
+
     //
     // End of program.
     private void OnMainWindowClosed(object sender, EventArgs e) {
@@ -537,5 +565,6 @@ namespace APOPHIS.GroundStation.GUI {
       Dispose(true);
     }
     #endregion
+
   }
 }

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using APOPHIS.GroundStation.Helpers;
+using System.Collections.Generic;
+using System.Text;
+using System.Reflection;
+using System.Linq;
 
 namespace APOPHIS.GroundStation.Packet.Data {
   class DataPacket : IPacket {
@@ -160,6 +164,40 @@ namespace APOPHIS.GroundStation.Packet.Data {
     public void FromBytes(byte[] packetArr) {
       if (packetArr.Length != Marshal.SizeOf(_data)) throw new ArgumentException($"Array is not a valid size ({nameof(packetArr)} ({packetArr.Length}) != DataPacket Struct ({Marshal.SizeOf(_data)})).", nameof(packetArr));
       _data = packetArr.FromBytes<Packet>();
+    }
+
+    public static string ToCsv<T>(string separator, IEnumerable<T> objectlist)
+    {
+      Type t = typeof(T);
+      FieldInfo[] fields = t.GetFields();
+
+      string header = String.Join(separator, fields.Select(f => f.Name).ToArray());
+
+      StringBuilder csvdata = new StringBuilder();
+      csvdata.AppendLine(header);
+
+      foreach (var o in objectlist)
+        csvdata.AppendLine(ToCsvFields(separator, fields, o));
+
+      return csvdata.ToString();
+    }
+
+    public static string ToCsvFields(string separator, FieldInfo[] fields, object o)
+    {
+      StringBuilder linie = new StringBuilder();
+
+      foreach (var f in fields)
+      {
+        if (linie.Length > 0)
+          linie.Append(separator);
+
+        var x = f.GetValue(o);
+
+        if (x != null)
+          linie.Append(x.ToString());
+      }
+
+      return linie.ToString();
     }
   }
 }
