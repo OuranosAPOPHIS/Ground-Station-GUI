@@ -8,6 +8,7 @@ using SharpDX.XInput;
 using APOPHIS.GroundStation.Input.Xbox;
 using APOPHIS.GroundStation.Packet.Data;
 using APOPHIS.GroundStation.Helpers;
+using APOPHIS.GroundStation.Packet;
 
 namespace APOPHIS.GroundStation.GUI {
   /// <summary>
@@ -23,7 +24,7 @@ namespace APOPHIS.GroundStation.GUI {
 
     //
     // Set up a log writer.
-    LogWriter _logWriter = new LogWriter();
+    PacketLogger _logWriter = new PacketLogger();
     string fileName = "GSDataLog";
     
     //
@@ -76,7 +77,7 @@ namespace APOPHIS.GroundStation.GUI {
 
     public MainWindow() {
       InitializeComponent();
-
+      
       // Initialize COM Port GUI options and add handler for COM Port changes
       cbPorts.ItemsSource = SerialPortService.GetAvailableSerialPorts();
       SerialPortService.PortsChanged += (sender, eventArgs) => {
@@ -154,15 +155,15 @@ namespace APOPHIS.GroundStation.GUI {
 
                         PreviousMillisecond = currentMillisecond;
 
-                        InputData.FromBytes(rawData);
+                        InputData.Bytes = rawData;
 
                         Dispatcher?.Invoke(() => UpdateGUI());
 
                         //
                         // Log all the received data to a log file.
-                        if (LogData)
-                          _logWriter.LogWrite(InputData.ToCsv(",", DataPacket));
-            break;
+                        //if (LogData)
+                          //_logWriter.LogWrite(InputData.ToCsv<DataPacket>(","));
+                        break;
                     }
                 }
                 else
@@ -241,7 +242,7 @@ namespace APOPHIS.GroundStation.GUI {
     public void SendPacket() {
       switch (ControlState) {
         case 'A': {
-            byte[] data = TargetOutData.GetBytes();
+            byte[] data = TargetOutData.Bytes;
 
             //
             // Write the data.
@@ -250,7 +251,7 @@ namespace APOPHIS.GroundStation.GUI {
             break;
           }
         case 'M': {
-            byte[] data = ControlOutData.GetBytes();
+            byte[] data = ControlOutData.Bytes;
 
             //
             // Write the data.
@@ -550,6 +551,7 @@ namespace APOPHIS.GroundStation.GUI {
     protected virtual void Dispose(bool disposing) {
       if (!disposedValue) {
         if (disposing) {
+          SerialPortService.CleanUp();
           _COMPort.Dispose();
           _controller.Dispose();
           SerialPortService.CleanUp();

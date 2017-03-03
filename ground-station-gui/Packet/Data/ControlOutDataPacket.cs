@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using APOPHIS.GroundStation.Helpers;
+using System.Linq;
 
 namespace APOPHIS.GroundStation.Packet.Data
 {
@@ -10,35 +11,46 @@ namespace APOPHIS.GroundStation.Packet.Data
     //
     // Output data struct for autonomous control.
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 28)]
-    private struct Packet
+    public struct Packet
     {
       public byte Magic1;
       public byte Magic2;
       public byte Magic3;
       public byte Type;          // Target or Control command? T or C?
 
-      public float Throttle;   // Desired throttle level.
-      public float Throttle2; // Desired throttle of left wheel in ground mode.
+      public float Throttle;     // Desired throttle level.
+      public float Throttle2;    // Desired throttle of left wheel in ground mode.
       public float Roll;         // Desired roll angle.
       public float Pitch;        // Desired pitch angle.
       public float Yaw;          // Desired yaw angle.
 
       public byte FlyOrDrive;     // vehicle flying or driving?
       public byte FDConfirm;      // fly or drive confirmation;
-      public byte PayloadRelease;    // Release the payload command.
-      public byte PRConfirm;         // Confirmation to release payload command.
+      public byte PayloadRelease; // Release the payload command.
+      public byte PRConfirm;      // Confirmation to release payload command.
     }
 
     private Packet _data;
+    
+    public byte[] Bytes {
+      get {
+        return _data.GetBytes();
+      }
+      set {
+        if (value.Length != Marshal.SizeOf(_data)) throw new ArgumentException($"Array is not a valid size ({nameof(value)} ({value.Length}) != DataPacket Struct ({Marshal.SizeOf(_data)})).", nameof(value));
+        _data = value.FromBytes<Packet>();
+      }
+    }
 
-    public byte[] Magic
-    {
-      get
-      {
+    public string CSVData { get { return _data.ToCSV<Packet>(fields: typeof(Packet).GetFields().Where(f => !f.Name.Contains("magic") && !f.Name.Contains("pad")).ToArray()); } }
+
+    public string CSVHeader { get { return CSVHelpers.ToCSVHeader<Packet>(fields: typeof(Packet).GetFields().Where(f => !f.Name.Contains("magic") && !f.Name.Contains("pad")).ToArray()); } }
+
+    public byte[] Magic {
+      get {
         return new byte[] { _data.Magic1, _data.Magic2, _data.Magic3 };
       }
-      set
-      {
+      set {
         if (value.Length != 3) throw new ArgumentOutOfRangeException("Value must have a byte array length of 3.");
         _data.Magic1 = value[0];
         _data.Magic2 = value[1];
@@ -85,14 +97,6 @@ namespace APOPHIS.GroundStation.Packet.Data
     public ControlOutDataPacket(byte[] magic) : this()
     {
       Magic = magic;
-    }
-
-    public byte[] GetBytes() => _data.GetBytes();
-
-    public void FromBytes(byte[] packetArr)
-    {
-      if (packetArr.Length != Marshal.SizeOf(_data)) throw new ArgumentException(string.Format("Array is not a valid size ({0}).", Marshal.SizeOf(_data)), nameof(packetArr));
-      _data = packetArr.FromBytes<Packet>();
-    }
+    }    
   }
 }
