@@ -11,17 +11,18 @@ namespace APOPHIS.GroundStation.Packet {
 
     public void LogCreator(string fileName) {
       FileName = fileName;
+            int num = 1;
 
       if (!File.Exists(m_exePath + "\\" + FileName + ".csv")) {
-        File.Create(m_exePath + "\\" + FileName + ".csv");
+        File.Create(m_exePath + "\\" + FileName + ".csv").Close();
         FileName = FileName + ".csv";
       } else {
         do {
-          FileName += 1;
-        } while (File.Exists(m_exePath + "\\" + FileName + ".csv"));
+                num++;
+            } while (File.Exists(m_exePath + "\\" + FileName + num + ".csv"));
 
-        FileName += ".csv";
-        File.Create(m_exePath + "\\" + FileName);
+        FileName += num + ".csv";
+        File.Create(m_exePath + "\\" + FileName).Close();
       }
 
       //

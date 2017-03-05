@@ -161,9 +161,9 @@ namespace APOPHIS.GroundStation.GUI {
 
                         //
                         // Log all the received data to a log file.
-                        //if (LogData)
-                          //_logWriter.LogWrite(InputData.ToCsv<DataPacket>(","));
-                        break;
+                        if (LogData)
+                            _logWriter.LogWrite(InputData.CSVData);
+                              break;
                     }
                 }
                 else
@@ -361,7 +361,7 @@ namespace APOPHIS.GroundStation.GUI {
       }
       //
       // Trigger a data packet send over the com port.
-      if (RadioConnected && _controller.IsConnected) 
+      if ((RadioConnected && _controller.IsConnected) || (RadioConnected && (ControlState == 'A'))) 
                 SendPacket();
     }
 
@@ -532,6 +532,7 @@ namespace APOPHIS.GroundStation.GUI {
         //
         // Create the log file.
         _logWriter.LogCreator(fileName);
+        _logWriter.LogWrite(InputData.CSVHeader);
 
         LogData = true;
 
