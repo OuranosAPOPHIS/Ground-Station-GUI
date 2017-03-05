@@ -207,12 +207,12 @@ namespace APOPHIS.GroundStation.GUI {
       txtAccelX.Text = InputData.AccelX.ToString();
       txtAccelY.Text = InputData.AccelY.ToString();
       txtAccelZ.Text = InputData.AccelZ.ToString();
-      txtVelX.Text = InputData.VelX.ToString();
-      txtVelY.Text = InputData.VelY.ToString();
-      txtVelZ.Text = InputData.VelZ.ToString();
-      txtPosX.Text = InputData.PosX.ToString();
-      txtPosY.Text = InputData.PosY.ToString();
-      txtPosZ.Text = InputData.PosZ.ToString();
+      txtVelX.Text = InputData.GyroX.ToString();
+      txtVelY.Text = InputData.GyroY.ToString();
+      txtVelZ.Text = InputData.GyroZ.ToString();
+      txtPosX.Text = InputData.MagX.ToString();
+      txtPosY.Text = InputData.MagY.ToString();
+      txtPosZ.Text = InputData.MagZ.ToString();
       txtFlyOrDrive.Text = (InputData.Movement == 'D') ? "DRIVING" : "FLYING";
       txtRoll.Text = InputData.Roll.ToString();
       txtPitch.Text = InputData.Pitch.ToString();

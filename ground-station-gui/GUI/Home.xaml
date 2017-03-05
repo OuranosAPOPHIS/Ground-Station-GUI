@@ -84,17 +84,17 @@
         <TextBox x:Name="txtAccelY" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="63" Visibility="Visible" Height="26"/>
         <Label x:Name="AccelZLabel" Content="Acceleration Z"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="95" Visibility="Visible"/>
         <TextBox x:Name="txtAccelZ" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="95" Visibility="Visible" Height="26"/>
-        <Label x:Name="VelXlabel" Content="Velocity X" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="126" Visibility="Visible"/>
+        <Label x:Name="VelXlabel" Content="Gyro X" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="126" Visibility="Visible"/>
         <TextBox x:Name="txtVelX" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="126" Visibility="Visible" Height="26"/>
-        <Label x:Name="VelYLabel" Content="Velocity Y" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="157" Visibility="Visible"/>
+        <Label x:Name="VelYLabel" Content="Gyro Y" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="157" Visibility="Visible"/>
         <TextBox x:Name="txtVelY" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="157" Visibility="Visible" Height="26"/>
-        <Label x:Name="VelZLabel" Content="Velocity Z" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="188" Visibility="Visible"/>
+        <Label x:Name="VelZLabel" Content="Gyro Z" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="188" Visibility="Visible"/>
         <TextBox x:Name="txtVelZ" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="188" Visibility="Visible" Height="26"/>
-        <Label x:Name="PosXLabel" Content="Postion X" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="219" Visibility="Visible"/>
+        <Label x:Name="PosXLabel" Content="Mag X (uT)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="219" Visibility="Visible"/>
         <TextBox x:Name="txtPosX" HorizontalAlignment="Left"  IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="219" Visibility="Visible" Height="26"/>
-        <Label x:Name="PosYLabel" Content="Position Y" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="250" Visibility="Visible"/>
+        <Label x:Name="PosYLabel" Content="Mag Y (uT)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="250" Visibility="Visible"/>
         <TextBox x:Name="txtPosY" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="250" Visibility="Visible" Height="26"/>
-        <Label x:Name="PosZLabel" Content="Position Z" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="281" Visibility="Visible"/>
+        <Label x:Name="PosZLabel" Content="Mag Z (uT)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Canvas.Top="281" Visibility="Visible"/>
         <TextBox x:Name="txtPosZ" HorizontalAlignment="Left"  IsReadOnly="True" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="278" TextAlignment="Center" Canvas.Left="113" Canvas.Top="281" Visibility="Visible" Height="26"/>
       </Canvas>
       <Separator Height="20" Margin="0" Visibility="Hidden"/>

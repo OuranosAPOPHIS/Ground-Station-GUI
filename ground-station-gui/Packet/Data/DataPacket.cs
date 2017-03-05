@@ -87,17 +87,17 @@ namespace APOPHIS.GroundStation.Packet.Data
 
     public float AccelZ { get { return _data.accelZ; } }
 
-    public float VelX { get { return _data.gyroX; } }
+    public float GyroX { get { return _data.gyroX; } }
 
-    public float VelY { get { return _data.gyroY; } }
+    public float GyroY { get { return _data.gyroY; } }
 
-    public float VelZ { get { return _data.gyroZ; } }
+    public float GyroZ { get { return _data.gyroZ; } }
 
-    public float PosX { get { return _data.magX; } }
+    public float MagX { get { return _data.magX * 1000000; } }
 
-    public float PosY { get { return _data.magY; } }
+    public float MagY { get { return _data.magY * 1000000; } }
 
-    public float PosZ { get { return _data.magZ; } }
+    public float MagZ { get { return _data.magZ * 1000000; } }
 
     public float Roll { get { return _data.roll; } }
 
