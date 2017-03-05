@@ -22,12 +22,12 @@ namespace APOPHIS.GroundStation.Packet.Data
       public float accelX;
       public float accelY;
       public float accelZ;
-      public float velX;
-      public float velY;
-      public float velZ;
-      public float posX;
-      public float posY;
-      public float posZ;
+      public float gyroX;
+      public float gyroY;
+      public float gyroZ;
+      public float magX;
+      public float magY;
+      public float magZ;
       public float roll;
       public float pitch;
       public float yaw;
@@ -87,17 +87,17 @@ namespace APOPHIS.GroundStation.Packet.Data
 
     public float AccelZ { get { return _data.accelZ; } }
 
-    public float VelX { get { return _data.velX; } }
+    public float VelX { get { return _data.gyroX; } }
 
-    public float VelY { get { return _data.velY; } }
+    public float VelY { get { return _data.gyroY; } }
 
-    public float VelZ { get { return _data.velZ; } }
+    public float VelZ { get { return _data.gyroZ; } }
 
-    public float PosX { get { return _data.posX; } }
+    public float PosX { get { return _data.magX; } }
 
-    public float PosY { get { return _data.posY; } }
+    public float PosY { get { return _data.magY; } }
 
-    public float PosZ { get { return _data.posZ; } }
+    public float PosZ { get { return _data.magZ; } }
 
     public float Roll { get { return _data.roll; } }
 
@@ -143,12 +143,12 @@ namespace APOPHIS.GroundStation.Packet.Data
       _data.accelX = 0;
       _data.accelY = 0;
       _data.accelZ = 0;
-      _data.velX = 0;
-      _data.velY = 0;
-      _data.velZ = 0;
-      _data.posX = 0;
-      _data.posY = 0;
-      _data.posZ = 0;
+      _data.gyroX = 0;
+      _data.gyroY = 0;
+      _data.gyroZ = 0;
+      _data.magX = 0;
+      _data.magY = 0;
+      _data.magZ = 0;
       _data.roll = 0;
       _data.pitch = 0;
       _data.yaw = 0;

@@ -536,7 +536,15 @@ namespace APOPHIS.GroundStation.GUI {
 
         LogData = true;
 
-        this.LogFileBtn.Content = "Logging Data";
+        this.LogFileBtn.Content = "Stop Logging Data";
+      }
+      else
+      {
+        //
+        // Stop the logger.
+        LogData = false;
+
+        this.LogFileBtn.Content = "Log Data";
       }
     }
 
