@@ -314,23 +314,26 @@ namespace APOPHIS.GroundStation.GUI {
                   //
                   // Use the left and right triggers to calaculate throttle. 
                   // Value ranges from 0 to 255 for triggers. 
+                  /*
                   if (_controller.RightTrigger > 0) {
                     ControlOutData.Throttle = Convert.ToSingle(_controller.RightTrigger);
                   } else if (_controller.LeftTrigger > 0) {
                     ControlOutData.Throttle = Convert.ToSingle(_controller.LeftTrigger * -1);
                   } else {
                     ControlOutData.Throttle = 0.0F;
-                  }
+                  }*/
 
-                    //
-                    // Get the yaw direction using the controller bumpers. 
-                    if (_controller.IsRightShoulder)
-                        ControlOutData.Yaw = 1;
-                    else if (_controller.IsLeftShoulder)
-                        ControlOutData.Yaw = -1;
-                    else
-                        ControlOutData.Yaw = 0;
-                    break;
+                  ControlOutData.Throttle = (Single)_controller.RightThumb.Y;
+
+                 //
+                 // Get the yaw direction using the controller bumpers. 
+                 if (_controller.IsRightShoulder)
+                    ControlOutData.Yaw = 1;
+                else if (_controller.IsLeftShoulder)
+                    ControlOutData.Yaw = -1;
+                else
+                    ControlOutData.Yaw = 0;
+                break;
                 }
             }
 

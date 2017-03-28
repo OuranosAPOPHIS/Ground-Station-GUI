@@ -60,7 +60,7 @@ namespace APOPHIS.GroundStation.Input.Xbox
 
     public double LeftDeadZone { get; set; } = Convert.ToDouble(Gamepad.LeftThumbDeadZone) / short.MaxValue;
     public double RightDeadZone { get; set; } = Convert.ToDouble(Gamepad.RightThumbDeadZone) / short.MaxValue;
-    public double TriggerThreshold { get; set; } = Convert.ToDouble(Gamepad.TriggerThreshold) / byte.MaxValue;
+        public double TriggerThreshold { get; set; } = Convert.ToDouble(Gamepad.TriggerThreshold - 10) / byte.MaxValue;
     public Vector LeftThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.LeftThumbX, Gamepad.LeftThumbY, LeftDeadZone) : new Vector(0, 0); } }
     public Vector RightThumb { get { return IsConnected ? CalculateDeadzone(Gamepad.RightThumbX, Gamepad.RightThumbY, RightDeadZone) : new Vector(0, 0); } }
     public double LeftTrigger { get { return (IsConnected && (Convert.ToDouble(Gamepad.LeftTrigger) / byte.MaxValue) >= TriggerThreshold) ? (Convert.ToDouble(Gamepad.LeftTrigger) / byte.MaxValue) * 100 : ((byte)0); } }
@@ -88,9 +88,9 @@ namespace APOPHIS.GroundStation.Input.Xbox
     public XboxController(int pollRate = 100)
     {
       PollRate = pollRate;
-    }
+        }
 
-    public async Task<bool> Connect(UserIndex user = UserIndex.Any)
+        public async Task<bool> Connect(UserIndex user = UserIndex.Any)
     {
       await Disconnect();
       disconnect = new CancellationTokenSource();
