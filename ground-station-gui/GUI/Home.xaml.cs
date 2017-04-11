@@ -36,7 +36,8 @@ namespace APOPHIS.GroundStation.GUI {
 
     //
     // True will be autonomous mode. False will be manual mode.
-    // Initialize this to manual mode. 'M' for manual. 'A' for autonomous.
+    // Initialize this to manual mode. 'M' for manual. 'A' for autonomous. 
+    // 'S' for arm/disarm command.
     char ControlState { get; set; } = 'M';
     
     //
@@ -74,6 +75,10 @@ namespace APOPHIS.GroundStation.GUI {
     ControlOutDataPacket ControlOutData { get; set; } = new ControlOutDataPacket();
 
     TargetOutDataPacket TargetOutData { get; set; } = new TargetOutDataPacket();
+
+    //
+    // Arm/Disarm flag.
+    bool g_bSysArmed = false;
 
     public MainWindow() {
       InitializeComponent();
@@ -296,38 +301,77 @@ namespace APOPHIS.GroundStation.GUI {
                     //
                     // Travelling on the ground. Ignore pitch and roll.
                     // Check the throttle level. Ignore any x value on the right stick.
-                    // This will be a % from 0.0 to 1.0.
-                    ControlOutData.Throttle = (float)_controller.RightThumb.Y;
-                    ControlOutData.Throttle2 = (float)_controller.LeftThumb.Y;
+                    // This will be a % from 0.0 to 100.0.
+                    ControlOutData.Throttle = (int)_controller.RightThumb.Y;
+                    ControlOutData.Throttle2 = (int)_controller.LeftThumb.Y;
                     ControlOutData.Pitch = 0.0F;
                     ControlOutData.Roll = 0.0F;
                     ControlOutData.Yaw = 0.0F;
+
+                    //
+                    // Check to make sure no values exceed 100.
+                    if (ControlOutData.Throttle > 100)
+                        ControlOutData.Throttle = 100;
+                    if (ControlOutData.Throttle < -100)
+                        ControlOutData.Throttle = -100;
+
+                    if (ControlOutData.Throttle2 > 100)
+                        ControlOutData.Throttle2 = 100;
+                    if (ControlOutData.Throttle2 < -100)
+                        ControlOutData.Throttle2 = -100;
+
+                    //
+                    // Print the values on the GUI.
+                    RightStick.Text = Convert.ToString(ControlOutData.Throttle);
+                    LeftStick.Text = Convert.ToString(ControlOutData.Throttle2);
+
                   break;
                 }
-              case 'F': {
-                  //
-                  // We are flying.
-                  // Calculate the values of the left analog stick.
-                  ControlOutData.Pitch = (float)_controller.LeftThumb.Y;
-                  ControlOutData.Roll = (float)_controller.LeftThumb.X;
+             case 'F': {
+                //
+                // We are flying.
+                // Calculate the values of the left analog stick.
+                ControlOutData.Pitch = (float)_controller.LeftThumb.Y;
+                ControlOutData.Roll = (float)_controller.LeftThumb.X;
 
-                  //
-                  // Use the left and right triggers to calaculate throttle. 
-                  // Value ranges from 0 to 255 for triggers. 
-                  /*
-                  if (_controller.RightTrigger > 0) {
-                    ControlOutData.Throttle = Convert.ToSingle(_controller.RightTrigger);
-                  } else if (_controller.LeftTrigger > 0) {
-                    ControlOutData.Throttle = Convert.ToSingle(_controller.LeftTrigger * -1);
-                  } else {
-                    ControlOutData.Throttle = 0.0F;
-                  }*/
+                //
+                // Use the left and right triggers to calaculate throttle. 
+                // Value ranges from 0 to 255 for triggers. 
+                /*
+                if (_controller.RightTrigger > 0) {
+                ControlOutData.Throttle = Convert.ToSingle(_controller.RightTrigger);
+                } else if (_controller.LeftTrigger > 0) {
+                ControlOutData.Throttle = Convert.ToSingle(_controller.LeftTrigger * -1);
+                } else {
+                ControlOutData.Throttle = 0.0F;
+                }*/
 
-                  ControlOutData.Throttle = (Single)_controller.RightThumb.Y;
+                ControlOutData.Throttle = (int)_controller.RightThumb.Y;
 
-                 //
-                 // Get the yaw direction using the controller bumpers. 
-                 if (_controller.IsRightShoulder)
+                //
+                // Check to make sure no values exceed 100.
+                if (ControlOutData.Throttle > 100)
+                    ControlOutData.Throttle = 100;
+
+                if (ControlOutData.Pitch > 100)
+                    ControlOutData.Pitch = 100;
+
+                if (ControlOutData.Roll > 100)
+                    ControlOutData.Roll = 100;
+
+                //
+                // Make sure no negative throttles are sent. 
+                if (ControlOutData.Throttle < 0)
+                    ControlOutData.Throttle = 0;
+
+                //
+                // Print the values on the GUI.
+                RightStick.Text = Convert.ToString(ControlOutData.Throttle);
+                LeftStick.Text = Convert.ToString(ControlOutData.Pitch);
+
+                //
+                // Get the yaw direction using the controller bumpers. 
+                if (_controller.IsRightShoulder)
                     ControlOutData.Yaw = 1;
                 else if (_controller.IsLeftShoulder)
                     ControlOutData.Yaw = -1;
@@ -551,9 +595,79 @@ namespace APOPHIS.GroundStation.GUI {
       }
     }
 
-    //
-    // End of program.
-    private void OnMainWindowClosed(object sender, EventArgs e) {
+        //
+        // Arm the system to begin the normal execution.
+        private void ArmSystemBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //
+            // Make sure we reset the ControlState after exectution.
+            bool bAuto = false;
+
+            //
+            // Stop the timer to avoid clashes.
+            PacketUpdate.Stop();
+
+            //
+            // Capture the control state before modifying it.
+            if (ControlState == 'A')
+                bAuto = true;
+
+            if (!g_bSysArmed)
+            {
+                //
+                // Send a packet beginning with an 'A'.
+                TargetOutData.Type = 'A';
+                ControlState = 'A';
+
+                if ((RadioConnected && _controller.IsConnected) || (RadioConnected && (ControlState == 'A'))) { 
+                    SendPacket();
+
+                    //
+                    // Reset the flag.
+                    g_bSysArmed = true;
+
+                    //
+                    // Reconfigure the GUI for user feedback.
+                    this.ArmSystemBox.Background = Brushes.GreenYellow;
+                    this.ArmSystemBox.Text = "ARMED";
+                    this.ArmSystemBtn.Content = "Disarm System";
+                }
+            }
+            else
+            {
+                //
+                // Send a packet beginning with a 'D' to disarm.
+                TargetOutData.Type = 'D';
+                ControlState = 'A';
+
+                if ((RadioConnected && _controller.IsConnected) || (RadioConnected && (ControlState == 'A'))) {
+                    SendPacket();
+
+                    //
+                    // Reset the flag.
+                    g_bSysArmed = false;
+
+                    //
+                    // Reconfigure the GUI for user feedback.
+                    ArmSystemBox.Background = Brushes.Red;
+                    ArmSystemBox.Text = "DISARMED";
+                    ArmSystemBtn.Content = "Arm System";
+                }
+            }
+
+            //
+            // Reset ControlState after execution.
+            if (!bAuto)
+                ControlState = 'M';
+
+            //
+            // Restart the timer.
+            PacketUpdate.Start();
+    }
+
+        //
+        // End of program.
+        private void OnMainWindowClosed(object sender, EventArgs e) {
       Dispose();
     }
 
@@ -578,7 +692,6 @@ namespace APOPHIS.GroundStation.GUI {
       // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
       Dispose(true);
     }
-    #endregion
-
-  }
+        #endregion
+    }
 }

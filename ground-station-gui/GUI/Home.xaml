@@ -33,13 +33,16 @@
         <Button x:Name="DeployPayload" Content="Deploy" HorizontalAlignment="Left" VerticalAlignment="Top" Width="86" Click="OnBtnDeployPayloadClick" Height="26" Canvas.Top="33" Visibility="Visible" Canvas.Left="305"/>
       </Canvas>
       <Separator Height="20" Margin="0" Visibility="Hidden"/>
-      <Canvas Height="59">
+      <Canvas Height="85">
         <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" Content="Vehicle Control Mode" VerticalAlignment="Top" Background="LightCyan" Width="391" FontWeight="Bold" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Visibility="Visible"/>
         <Label Content="Mode" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Height="26" Canvas.Top="33" Visibility="Visible"/>
         <TextBox x:Name="AutoControl" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" IsReadOnly="True" Height="26" TextWrapping="Wrap" Text="Autonomous" VerticalAlignment="Top" TextAlignment="Center" Background="Red" Canvas.Left="113" Canvas.Top="33" Visibility="Visible" Width="86" />
         <TextBox x:Name="ManualControl" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" IsReadOnly="True" Height="26" TextWrapping="Wrap" Text="Manual" VerticalAlignment="Top" TextAlignment="Center" Background="GreenYellow" Canvas.Left="209" Canvas.Top="33" Visibility="Visible" Width="86" />
         <Button x:Name="btnMode" Content="Switch Mode" HorizontalAlignment="Left" VerticalAlignment="Top" Width="86" Click="OnBtnModeClick" Height="26" Canvas.Left="305" Canvas.Top="33" Visibility="Visible" />
         <Label Content="Update Rate (Hz)" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Height="26" Canvas.Top="64" Visibility="Visible"/>
+        <Label Content="Arm System" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Background="LightCyan" Height="26" Canvas.Top="95" Visibility="Visible"/>
+        <Button x:Name="ArmSystemBtn" Content="Arm System" HorizontalAlignment="Left" VerticalAlignment="Top" Width="86" Click="ArmSystemBtn_Click"  Height="26" Canvas.Left="305" Canvas.Top="95" Visibility="Visible" />
+        <TextBox x:Name="ArmSystemBox" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" IsReadOnly="True" Height="26" TextWrapping="Wrap" Text="DISARMED" VerticalAlignment="Top" TextAlignment="Center" Background="Red" Canvas.Left="113" Canvas.Top="95" Visibility="Visible" Width="182" />
         <TextBox x:Name="UpdateRate" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="26" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" TextAlignment="Center" Canvas.Left="113" Canvas.Top="64" Visibility="Visible" Width="182" />
         <Button x:Name="Set" Content="Set Rate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="86" Click="OnBtnSetUpdateRateClick"  Height="26" Canvas.Left="305" Canvas.Top="64" Visibility="Visible" />
       </Canvas>
@@ -71,7 +74,11 @@
       </Canvas>
       <Separator Height="10" Margin="0" Visibility="Hidden"/>
       <Canvas VerticalAlignment="Top" Height="59">
-        <Button x:Name="LogFileBtn" Content="Create Log File" HorizontalAlignment="Left" VerticalAlignment="Top" Width="134" Click="LogFileBtn_Click" Height="26" Canvas.Top="33" Visibility="Visible"/>
+        <Button x:Name="LogFileBtn" Content="Create Log File" HorizontalAlignment="Left" VerticalAlignment="Top" Width="134" Click="LogFileBtn_Click" Height="26" Canvas.Top="25" Visibility="Visible"/>
+        <TextBox x:Name="LeftStick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" IsReadOnly="True" Height="26" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" TextAlignment="Center" Canvas.Left="209" Canvas.Top="25" Visibility="Visible" Width="86" />
+        <TextBox x:Name="RightStick" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" IsReadOnly="True" Height="26" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" TextAlignment="Center" Canvas.Left="300" Canvas.Top="25" Visibility="Visible" Width="86" />
+                <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" Content="Left Stick" VerticalAlignment="Top" Background="LightCyan" Width="86" Height="25" FontWeight="Bold" BorderThickness="1" Canvas.Left="209" Canvas.Top="0" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Visibility="Visible"/>
+                <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Left" Content="Right Stick" VerticalAlignment="Top" Background="LightCyan" Width="86" Height ="25" FontWeight="Bold" BorderThickness="1" Canvas.Left="300" Canvas.Top="0" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Visibility="Visible"/>
       </Canvas>
     </StackPanel>
     <Separator Margin="0" Width="50" Visibility="Hidden" Height="656"/>

@@ -12,7 +12,7 @@ namespace APOPHIS.GroundStation.Packet.Data {
       public byte Magic1;
       public byte Magic2;
       public byte Magic3;
-      public byte Type;          // Target or Control command? T or C?
+      public byte Type;          // Target or Control command? T or C? Or A or D to indicate arm/disarm.
       public float TargetLat;    // Target Latitude
       public float TargetLong;   // Target Longitude
     }

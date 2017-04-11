@@ -18,8 +18,8 @@ namespace APOPHIS.GroundStation.Packet.Data
       public byte Magic3;
       public byte Type;          // Target or Control command? T or C?
 
-      public float Throttle;     // Desired throttle level.
-      public float Throttle2;    // Desired throttle of left wheel in ground mode.
+      public Int32 Throttle;     // Desired throttle level.
+      public Int32 Throttle2;    // Desired throttle of left wheel in ground mode.
       public float Roll;         // Desired roll angle.
       public float Pitch;        // Desired pitch angle.
       public float Yaw;          // Desired yaw angle.
@@ -60,9 +60,9 @@ namespace APOPHIS.GroundStation.Packet.Data
 
     public char Type { get { return Convert.ToChar(_data.Type); } set { _data.Type = Convert.ToByte(value); } }
 
-    public float Throttle { get { return _data.Throttle; } set { _data.Throttle = value; } }
+    public Int32 Throttle { get { return _data.Throttle; } set { _data.Throttle = value; } }
 
-    public float Throttle2 { get { return _data.Throttle2; } set { _data.Throttle2 = value; } }
+    public Int32 Throttle2 { get { return _data.Throttle2; } set { _data.Throttle2 = value; } }
 
     public float Roll { get { return _data.Roll; } set { _data.Roll = value; } }
 
