@@ -48,9 +48,9 @@ namespace APOPHIS.GroundStation.Packet.Data
       public byte uS6;
 
       public byte payBay;
+      public byte sysArmed;
       public byte padEnd1;
       public byte padEnd2;
-      public byte padEnd3;
     }
 
     private Packet _data;
@@ -130,6 +130,8 @@ namespace APOPHIS.GroundStation.Packet.Data
     public bool uS6 { get { return Convert.ToBoolean(_data.uS6); } }
 
     public bool PayloadBay { get { return Convert.ToBoolean(_data.payBay); } }
+
+    public bool sysArmed { get { return Convert.ToBoolean(_data.sysArmed); } }
 
     public DataPacket(char defaultMovement = 'D') {
       _data.magic1 = 0;

@@ -240,6 +240,32 @@ namespace APOPHIS.GroundStation.GUI {
       } else {
         txtPayloadDeployed.Background = Brushes.Red;
       }
+
+      //
+      // Check if the system is armed or disarmed.
+      if (InputData.sysArmed)
+      {
+        //
+        // System armed.
+        this.ArmSystemBox.Background = Brushes.GreenYellow;
+        this.ArmSystemBox.Text = "ARMED";
+
+        //
+        // Reconfigure the GUI for user feedback.
+        this.ArmSystemBtn.Content = "Disarm System";
+      }
+      else
+      {
+        //
+        // System disarmed.
+        ArmSystemBox.Background = Brushes.Red;
+        ArmSystemBox.Text = "DISARMED";
+
+        //
+        // Reconfigure the GUI for user feedback.
+        ArmSystemBtn.Content = "Arm System";
+      }
+
     }
 
     //
@@ -628,10 +654,8 @@ namespace APOPHIS.GroundStation.GUI {
 
                     //
                     // Reconfigure the GUI for user feedback.
-                    this.ArmSystemBox.Background = Brushes.GreenYellow;
-                    this.ArmSystemBox.Text = "ARMED";
                     this.ArmSystemBtn.Content = "Disarm System";
-                }
+              }
             }
             else
             {
@@ -649,11 +673,9 @@ namespace APOPHIS.GroundStation.GUI {
 
                     //
                     // Reconfigure the GUI for user feedback.
-                    ArmSystemBox.Background = Brushes.Red;
-                    ArmSystemBox.Text = "DISARMED";
-                    ArmSystemBtn.Content = "Arm System";
+                    this.ArmSystemBtn.Content = "Arm System";
                 }
-            }
+             }
 
             //
             // Reset ControlState after execution.
